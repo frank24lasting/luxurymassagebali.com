@@ -8,8 +8,6 @@ import { useContactSettings } from '@/lib/contact';
 
 interface PageRow { id: string; title: string; slug: string; excerpt: string | null; content: unknown; seo_title: string | null; seo_description: string | null; is_published: boolean; updated_at: string; }
 
-const MAP_EMBED_URL = 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3942.746425768273!2d115.20415287501628!3d-8.809876491242953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zOMKwNDgnMzUuNiJTIDExNcKwMTInMjQuMiJF!5e0!3m2!1sid!2sid!4v1783526216809!5m2!1sid!2sid';
-
 const fallbackPages: Record<string, { title: string; excerpt: string; content: string }> = {
   tentang: { title: 'Tentang Kami', excerpt: 'Luxury Massage Bali menghadirkan treatment home service premium di Bali.', content: 'Kami menghadirkan relaksasi, kecantikan, dan pemulihan tubuh langsung ke villa, hotel, apartemen, atau rumah Anda. Terapis profesional, produk higienis, dan jadwal fleksibel.' },
   kontak: { title: 'Kontak', excerpt: 'Hubungi Luxury Massage Bali untuk konsultasi dan reservasi.', content: 'Area layanan: Bali.' },
@@ -47,7 +45,7 @@ function renderPageContent(content: unknown): string {
 }
 
 function LuxuryMapCard() {
-  const { phone, address, googleMapsUrl, getWhatsAppUrl } = useContactSettings();
+  const { phone, address, googleMapsUrl, googleMapsEmbedSrc, getWhatsAppUrl } = useContactSettings();
 
   return (
     <motion.section
@@ -135,7 +133,7 @@ function LuxuryMapCard() {
             <div className="absolute inset-x-0 top-0 z-10 h-24 bg-gradient-to-b from-dark-card to-transparent" />
             <iframe
               title="Luxury Massage Bali operational location"
-              src={MAP_EMBED_URL}
+              src={googleMapsEmbedSrc}
               width="100%"
               height="100%"
               style={{ border: 0 }}

@@ -4,12 +4,13 @@ import { Building2, CalendarClock, Globe, Image as ImageIcon, MapPin, Menu, Mess
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
 import { MediaPickerButton } from '@/components/ui/media-picker';
+import { extractMapEmbedSrc, DEFAULT_MAP_EMBED_SRC } from '@/lib/contact';
 
 type SettingValue = Record<string, unknown>;
 type SettingKey = 'contact_info' | 'seo_global' | 'branding' | 'navigation' | 'footer' | 'booking_rules' | 'theme' | 'social_links' | 'analytics' | 'maintenance';
 
 const defaults: Record<SettingKey, SettingValue> = {
-  contact_info: { phone: '+6281353681757', whatsapp: '+6281353681757', email: 'hello@luxurymassagebali.com', address: 'Bali, Indonesia', google_maps_url: 'https://maps.app.goo.gl/SbephNzX2QaKfiEB9?g_st=iwb', open_hour: '09:00', close_hour: '21:00', timezone: 'Asia/Makassar' },
+  contact_info: { phone: '+6281353681757', whatsapp: '+6281353681757', email: 'hello@luxurymassagebali.com', address: 'Bali, Indonesia', google_maps_url: 'https://maps.app.goo.gl/SbephNzX2QaKfiEB9?g_st=iwb', google_maps_embed: DEFAULT_MAP_EMBED_SRC, open_hour: '09:00', close_hour: '21:00', timezone: 'Asia/Makassar' },
   seo_global: { title: 'Luxury Massage Bali — Premium Home Massage', description: 'Premium massage dan wellness treatment langsung ke villa, hotel, apartemen, atau rumah Anda di Bali.', keywords: 'luxury massage bali, home massage bali, balinese massage, out call massage bali', og_image: '', robots: 'index,follow', canonical: 'https://luxurymassagebali.com' },
   branding: {
     site_name: 'Luxury Massage Bali',
@@ -452,7 +453,7 @@ export default function AdminSettings() {
 
                 <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                   <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
-                    <MapPin className="h-4 w-4" /> URL Google Maps (google_maps_url)
+                    <MapPin className="h-4 w-4" /> URL Google Maps Navigasi (google_maps_url)
                   </span>
                   <p className="mt-1 text-xs text-gray-400">Link navigasi Google Maps untuk tombol 'Open Google Maps'.</p>
                   <input
@@ -462,6 +463,42 @@ export default function AdminSettings() {
                     placeholder="https://maps.app.goo.gl/..."
                     className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white text-sm outline-none transition focus:border-primary font-mono"
                   />
+                </label>
+
+                <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4 md:col-span-2">
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <MapPin className="h-4 w-4" /> Google Maps Embed Code / Iframe (google_maps_embed)
+                  </span>
+                  <p className="mt-1 text-xs text-gray-400">
+                    Tempelkan kode embed lengkap dari Google Maps (contoh: <code>&lt;iframe src="https://www.google.com/maps/embed?..." ...&gt;&lt;/iframe&gt;</code>) atau link embed langsung.
+                  </p>
+                  <textarea
+                    rows={3}
+                    value={String(draft.google_maps_embed ?? '')}
+                    onChange={(e) => updateDraft('google_maps_embed', e.target.value)}
+                    placeholder='<iframe src="https://www.google.com/maps/embed?..." width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>'
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white font-mono text-xs outline-none transition focus:border-primary"
+                  />
+
+                  {/* Live Map Preview Box */}
+                  <div className="mt-4 rounded-xl border border-white/10 overflow-hidden bg-dark">
+                    <div className="bg-white/5 px-4 py-2 border-b border-white/10 flex items-center justify-between text-xs text-gray-400">
+                      <span className="font-bold text-white">✦ Live Embed Map Preview</span>
+                      <span className="font-mono text-[10px] text-primary truncate max-w-xs">{extractMapEmbedSrc(String(draft.google_maps_embed ?? ''))}</span>
+                    </div>
+                    <div className="h-64 w-full">
+                      <iframe
+                        title="Admin Maps Preview"
+                        src={extractMapEmbedSrc(String(draft.google_maps_embed ?? ''))}
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        className="w-full h-full"
+                      />
+                    </div>
+                  </div>
                 </label>
 
                 <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4 md:col-span-2">

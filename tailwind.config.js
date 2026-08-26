@@ -5,33 +5,33 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#dcebe4',
-          dark: '#a8c8ba',
-          light: '#f5faf7',
+          DEFAULT: '#1a4539',
+          dark: '#102e26',
+          light: '#286353',
         },
         secondary: {
-          DEFAULT: '#214038',
-          dark: '#19322c',
-          light: '#31594f',
+          DEFAULT: '#c59b27',
+          dark: '#9a7615',
+          light: '#e0b848',
         },
         accent: {
-          DEFAULT: '#dcebe4',
-          dark: '#a8c8ba',
+          DEFAULT: '#c59b27',
+          dark: '#9a7615',
         },
         dark: {
-          DEFAULT: '#10251f',
-          lighter: '#18332c',
-          card: '#23443b',
+          DEFAULT: '#f5f9f6',
+          lighter: '#edf5f0',
+          card: '#ffffff',
         },
         text: {
-          primary: '#f5faf7',
-          secondary: '#c5d6ce',
-          muted: '#91a79e',
+          primary: '#102922',
+          secondary: '#254b41',
+          muted: '#53756c',
         },
         glass: {
-          DEFAULT: 'rgba(255, 255, 255, 0.055)',
-          border: 'rgba(220, 235, 228, 0.13)',
-          hover: 'rgba(255, 255, 255, 0.09)',
+          DEFAULT: 'rgba(255, 255, 255, 0.85)',
+          border: 'rgba(20, 50, 42, 0.1)',
+          hover: 'rgba(255, 255, 255, 0.95)',
         },
       },
       fontFamily: {
@@ -41,9 +41,10 @@ export default {
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-gold': 'linear-gradient(135deg, #19322c 0%, #214038 100%)',
-        'gradient-dark': 'linear-gradient(180deg, #19322c 0%, #214038 100%)',
-        'gradient-overlay': 'linear-gradient(180deg, rgba(25,50,44,0) 0%, rgba(16,37,31,0.92) 100%)',
+        'gradient-gold': 'linear-gradient(135deg, #14382f 0%, #1f4e42 100%)',
+        'gradient-brand': 'linear-gradient(135deg, #14382f 0%, #245548 100%)',
+        'gradient-dark': 'linear-gradient(180deg, #f7faf8 0%, #edf5f0 100%)',
+        'gradient-overlay': 'linear-gradient(180deg, rgba(245,249,246,0) 0%, rgba(237,245,240,0.95) 100%)',
       },
       animation: {
         'ken-burns': 'kenBurns 7s ease-out both',

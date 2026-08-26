@@ -1,46 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Luxury Massage Bali">
   <defs>
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#d4af37"/>
-      <stop offset="50%" stop-color="#f4d03f"/>
-      <stop offset="100%" stop-color="#b8860b"/>
+    <linearGradient id="lmb-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e5c068"/>
+      <stop offset="50%" stop-color="#c59b27"/>
+      <stop offset="100%" stop-color="#9a7413"/>
     </linearGradient>
-    <linearGradient id="emerald" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0d2818"/>
-      <stop offset="100%" stop-color="#1a4a2e"/>
+    <linearGradient id="lmb-emerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#143329"/>
+      <stop offset="100%" stop-color="#091b15"/>
     </linearGradient>
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
   </defs>
   
-  <!-- Background circle -->
-  <circle cx="32" cy="32" r="30" fill="url(#emerald)"/>
-  
-  <!-- Outer gold ring -->
-  <circle cx="32" cy="32" r="28" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.8"/>
-  
-  <!-- Lotus flower -->
-  <g transform="translate(32, 32)" filter="url(#glow)">
-    <!-- Center petal -->
-    <path d="M0,-18 C-3,-12 -3,-6 0,0 C3,-6 3,-12 0,-18" fill="url(#gold)" opacity="0.9"/>
-    
-    <!-- Left petals -->
-    <path d="M-8,-14 C-12,-8 -12,-2 -8,4 C-4,-2 -4,-8 -8,-14" fill="url(#gold)" opacity="0.8"/>
-    <path d="M-14,-8 C-18,-2 -18,4 -14,10 C-10,4 -10,-2 -14,-8" fill="url(#gold)" opacity="0.7"/>
-    
-    <!-- Right petals -->
-    <path d="M8,-14 C12,-8 12,-2 8,4 C4,-2 4,-8 8,-14" fill="url(#gold)" opacity="0.8"/>
-    <path d="M14,-8 C18,-2 18,4 14,10 C10,4 10,-2 14,-8" fill="url(#gold)" opacity="0.7"/>
-    
-    <!-- Bottom petals -->
-    <path d="M-6,8 C-8,14 -6,18 0,20 C6,18 8,14 6,8 C4,12 2,14 0,14 C-2,14 -4,12 -6,8" fill="url(#gold)" opacity="0.6"/>
+  <!-- Rounded Base -->
+  <rect width="64" height="64" rx="16" fill="url(#lmb-emerald)"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" stroke="url(#lmb-gold)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Lotus & Luxury Icon -->
+  <g transform="translate(32, 32)">
+    <!-- Central Lotus Petal -->
+    <path d="M0,-16 C-3.5,-10 -3.5,-4 0,2 C3.5,-4 3.5,-10 0,-16" fill="url(#lmb-gold)"/>
+    <!-- Left Petals -->
+    <path d="M-8,-12 C-13,-6 -12,-1 -7,5 C-3,-1 -4,-6 -8,-12" fill="url(#lmb-gold)" opacity="0.85"/>
+    <path d="M-14,-6 C-17,0 -16,5 -10,9 C-7,4 -8,0 -14,-6" fill="url(#lmb-gold)" opacity="0.7"/>
+    <!-- Right Petals -->
+    <path d="M8,-12 C13,-6 12,-1 7,5 C3,-1 4,-6 8,-12" fill="url(#lmb-gold)" opacity="0.85"/>
+    <path d="M14,-6 C17,0 16,5 10,9 C7,4 8,0 14,-6" fill="url(#lmb-gold)" opacity="0.7"/>
+    <!-- Base Crescent -->
+    <path d="M-12,8 C-7,15 7,15 12,8 C6,11 -6,11 -12,8" fill="url(#lmb-gold)"/>
   </g>
-  
-  <!-- Inner glow circle -->
-  <circle cx="32" cy="32" r="24" fill="none" stroke="url(#gold)" stroke-width="0.5" opacity="0.4"/>
 </svg>

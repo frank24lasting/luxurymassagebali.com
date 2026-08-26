@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -12,6 +12,20 @@ import { NoIndex } from '@/components/seo/seo-head';
 import { AuthProvider, useAuth } from '@/lib/admin-auth';
 import { useBrandingSettings } from '@/lib/branding';
 import { LanguageProvider } from '@/lib/language';
+
+function FaviconSync() {
+  const { faviconUrl } = useBrandingSettings();
+
+  useEffect(() => {
+    if (!faviconUrl) return;
+    const favLink = document.getElementById('app-favicon') as HTMLLinkElement | null;
+    const appleFavLink = document.getElementById('app-apple-favicon') as HTMLLinkElement | null;
+    if (favLink) favLink.href = faviconUrl;
+    if (appleFavLink) appleFavLink.href = faviconUrl;
+  }, [faviconUrl]);
+
+  return null;
+}
 
 // ============================================
 // LAZY LOADING — All routes lazy loaded
@@ -138,6 +152,7 @@ export default function App() {
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
           <LanguageProvider>
+            <FaviconSync />
             <BrowserRouter>
               <Routes>
                 {/* Public Routes */}

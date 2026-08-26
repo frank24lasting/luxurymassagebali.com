@@ -5,6 +5,7 @@ import { ArrowLeft, BookOpen, Calendar, CheckCircle2, Clock, ExternalLink, Link2
 import { SEOHead } from '@/components/seo/seo-head';
 import { supabase } from '@/lib/supabase';
 import { getSiteUrl } from '@/lib/seo';
+import { useContactSettings } from '@/lib/contact';
 import type { Article, Service } from '@/lib/types';
 
 interface RichNode {
@@ -174,6 +175,7 @@ function RichArticleContent({ content, relatedArticles, services }: { readonly c
 
 export default function BlogDetail() {
   const { slug = '' } = useParams();
+  const { getWhatsAppUrl } = useContactSettings();
   const { data: article, isLoading } = useQuery({ queryKey: ['article', slug], queryFn: () => fetchArticle(slug), enabled: slug.length > 0 });
   const { data: related = [] } = useQuery({ queryKey: ['related-articles', article?.category, slug], queryFn: () => fetchRelated(article?.category ?? '', slug), enabled: Boolean(article?.category) });
   const { data: services = [] } = useQuery({ queryKey: ['related-services'], queryFn: () => fetchRelatedServices() });
@@ -227,7 +229,7 @@ export default function BlogDetail() {
               <div className="mx-5 mb-8 rounded-[2rem] border border-primary/20 bg-gradient-to-br from-primary/15 to-primary/5 p-6 md:mx-10 md:p-8">
                 <h2 className="font-heading text-2xl font-black text-white md:text-3xl">Butuh treatment setelah baca ini?</h2>
                 <p className="mt-3 text-sm leading-7 text-gray-300 md:text-base">Tim Luxury Massage Bali siap membantu memilih treatment terbaik sesuai kebutuhan Anda.</p>
-                <a href={`https://wa.me/6281353681757?text=${encodeURIComponent(`Halo Luxury Massage Bali, saya membaca artikel ${article.title} dan ingin konsultasi booking.`)}`} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-black text-dark transition hover:shadow-gold"><MessageCircle className="h-5 w-5" /> Chat Admin via WhatsApp</a>
+                <a href={getWhatsAppUrl(`Halo Luxury Massage Bali, saya membaca artikel ${article.title} dan ingin konsultasi booking.`)} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-black text-dark transition hover:shadow-gold"><MessageCircle className="h-5 w-5" /> Chat Admin via WhatsApp</a>
               </div>
               <TukangWebsitePromo />
             </article>

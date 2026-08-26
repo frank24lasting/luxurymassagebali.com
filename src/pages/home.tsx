@@ -26,6 +26,7 @@ import { HeroVideo } from '@/components/hero/hero-video';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { useLanguage } from '@/lib/language';
+import { useContactSettings } from '@/lib/contact';
 import type { Article, HeroSlide, Service } from '@/lib/types';
 
 type MobilePromo = { title: string; subtitle: string; image_url: string; link: string; badge: string };
@@ -191,6 +192,7 @@ const COVERAGE_AREAS = [
 
 export default function Home() {
   const { t, language } = useLanguage();
+  const { getWhatsAppUrl } = useContactSettings();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedArea, setSelectedArea] = useState<string>('Canggu');
 
@@ -262,7 +264,7 @@ export default function Home() {
     { label: 'Packages', icon: Gem, path: '/services', color: 'from-amber-300/20 to-yellow-500/20' },
     { label: 'Booking', icon: CalendarDays, path: '/appointment', color: 'from-emerald-500/30 to-primary/30' },
     { label: 'Articles', icon: BookOpen, path: '/blog', color: 'from-blue-400/20 to-cyan-500/20' },
-    { label: 'WhatsApp', icon: MessageCircle, path: 'https://wa.me/6281353681757', external: true, color: 'from-emerald-400/30 to-green-600/30' },
+    { label: 'WhatsApp', icon: MessageCircle, path: getWhatsAppUrl('Halo Luxury Massage Bali, saya ingin konsultasi layanan.'), external: true, color: 'from-emerald-400/30 to-green-600/30' },
   ];
 
   return (
@@ -504,11 +506,10 @@ export default function Home() {
                       key={area}
                       type="button"
                       onClick={() => setSelectedArea(area)}
-                      className={`rounded-xl px-3 py-1.5 text-xs font-bold transition duration-200 ${
-                        selectedArea === area
-                          ? 'border border-primary bg-primary text-dark shadow-md shadow-primary/20'
-                          : 'border border-white/10 bg-white/5 text-gray-300 hover:border-white/20'
-                      }`}
+                      className={`rounded-xl px-3 py-1.5 text-xs font-bold transition duration-200 ${selectedArea === area
+                        ? 'border border-primary bg-primary text-dark shadow-md shadow-primary/20'
+                        : 'border border-white/10 bg-white/5 text-gray-300 hover:border-white/20'
+                        }`}
                     >
                       {area}
                     </button>
@@ -525,9 +526,7 @@ export default function Home() {
                       <Link to="/appointment">Pesan Sekarang</Link>
                     </Button>
                     <a
-                      href={`https://wa.me/6281353681757?text=Halo%20Luxury%20Massage%20Bali%2C%20saya%20di%20area%20${encodeURIComponent(
-                        selectedArea
-                      )}%20ingin%20booking%20terapis`}
+                      href={getWhatsAppUrl(`Halo Luxury Massage Bali, saya di area ${selectedArea} ingin booking terapis`)}
                       target="_blank"
                       rel="noreferrer"
                       className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-emerald-400/40 bg-emerald-500/20 px-3.5 text-xs font-bold text-emerald-200 transition hover:bg-emerald-500/30"
@@ -566,11 +565,10 @@ export default function Home() {
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`shrink-0 rounded-full px-5 py-2 text-xs font-black transition duration-200 ${
-                  selectedCategory === cat
-                    ? 'border border-primary bg-primary text-dark shadow-[0_0_20px_rgba(212,175,55,0.3)]'
-                    : 'border border-white/10 bg-white/[0.04] text-gray-300 hover:border-white/20'
-                }`}
+                className={`shrink-0 rounded-full px-5 py-2 text-xs font-black transition duration-200 ${selectedCategory === cat
+                  ? 'border border-primary bg-primary text-dark shadow-[0_0_20px_rgba(212,175,55,0.3)]'
+                  : 'border border-white/10 bg-white/[0.04] text-gray-300 hover:border-white/20'
+                  }`}
               >
                 {cat === 'All' ? '✨ Semua Treatment' : cat}
               </button>
@@ -587,8 +585,8 @@ export default function Home() {
                   prices.length > 0
                     ? `${prices.length} Opsi Durasi`
                     : service.duration_minutes
-                    ? `${service.duration_minutes} ${t('minutes')}`
-                    : 'Flexible';
+                      ? `${service.duration_minutes} ${t('minutes')}`
+                      : 'Flexible';
 
                 return (
                   <motion.div
@@ -792,7 +790,7 @@ export default function Home() {
                   <Link to="/appointment">Booking Form Online</Link>
                 </Button>
                 <a
-                  href="https://wa.me/6281353681757?text=Halo%20Luxury%20Massage%20Bali%2C%20saya%20ingin%20booking%20massage%20ke%20villa"
+                  href={getWhatsAppUrl('Halo Luxury Massage Bali, saya ingin booking massage ke villa')}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/40 bg-emerald-500/20 px-5 text-xs font-black text-emerald-200 transition hover:bg-emerald-500/30"

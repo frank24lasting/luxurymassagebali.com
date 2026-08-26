@@ -4,16 +4,16 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Compass, MapPin, MessageCircle, Navigation, Phone, Sparkles } from 'lucide-react';
 import { SEOHead } from '@/components/seo/seo-head';
 import { supabase } from '@/lib/supabase';
+import { useContactSettings } from '@/lib/contact';
 
 interface PageRow { id: string; title: string; slug: string; excerpt: string | null; content: unknown; seo_title: string | null; seo_description: string | null; is_published: boolean; updated_at: string; }
 
 const MAP_EMBED_URL = 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3942.746425768273!2d115.20415287501628!3d-8.809876491242953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zOMKwNDgnMzUuNiJTIDExNcKwMTInMjQuMiJF!5e0!3m2!1sid!2sid!4v1783526216809!5m2!1sid!2sid';
-const GOOGLE_MAPS_URL = 'https://maps.app.goo.gl/SbephNzX2QaKfiEB9?g_st=iwb';
 
 const fallbackPages: Record<string, { title: string; excerpt: string; content: string }> = {
   tentang: { title: 'Tentang Kami', excerpt: 'Luxury Massage Bali menghadirkan treatment home service premium di Bali.', content: 'Kami menghadirkan relaksasi, kecantikan, dan pemulihan tubuh langsung ke villa, hotel, apartemen, atau rumah Anda. Terapis profesional, produk higienis, dan jadwal fleksibel.' },
-  kontak: { title: 'Kontak', excerpt: 'Hubungi Luxury Massage Bali untuk konsultasi dan reservasi.', content: 'WhatsApp: +6281353681757. Area layanan: Bali. Maps: https://maps.app.goo.gl/SbephNzX2QaKfiEB9?g_st=iwb' },
-  contact: { title: 'Contact', excerpt: 'Contact Luxury Massage Bali for booking and consultation.', content: 'WhatsApp: +6281353681757. Service area: Bali.' },
+  kontak: { title: 'Kontak', excerpt: 'Hubungi Luxury Massage Bali untuk konsultasi dan reservasi.', content: 'Area layanan: Bali.' },
+  contact: { title: 'Contact', excerpt: 'Contact Luxury Massage Bali for booking and consultation.', content: 'Service area: Bali.' },
   faq: { title: 'FAQ', excerpt: 'Pertanyaan umum sebelum booking Luxury Massage Bali.', content: 'Booking dilakukan lewat WhatsApp. Pilih layanan, durasi, lokasi, tanggal, dan jam. Tim akan mengonfirmasi ketersediaan terapis sebelum jadwal final.' },
   'cara-booking': { title: 'Cara Booking', excerpt: 'Reservasi mudah via WhatsApp.', content: 'Klik tombol Book Appointment, kirim nama, lokasi, layanan, tanggal, dan jam pilihan. Tim kami akan membalas untuk konfirmasi jadwal dan total biaya.' },
   'kebijakan-privasi': { title: 'Kebijakan Privasi', excerpt: 'Kami menjaga data reservasi pelanggan.', content: 'Data nama, nomor telepon, lokasi, dan preferensi layanan hanya digunakan untuk keperluan reservasi, operasional terapis, dan komunikasi layanan.' },
@@ -36,10 +36,6 @@ async function fetchPage(slug: string): Promise<PageRow | null> {
   return data.find((page) => page.slug === slug) ?? data[0] ?? null;
 }
 
-function buildWhatsAppUrl(title: string): string {
-  return `https://wa.me/6281353681757?text=${encodeURIComponent(`Halo Luxury Massage Bali, saya ingin booking/konsultasi tentang ${title}.`)}`;
-}
-
 function renderPageContent(content: unknown): string {
   if (typeof content === 'string') return content;
   if (!content || typeof content !== 'object') return '';
@@ -51,6 +47,8 @@ function renderPageContent(content: unknown): string {
 }
 
 function LuxuryMapCard() {
+  const { phone, address, googleMapsUrl, getWhatsAppUrl } = useContactSettings();
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 36, scale: 0.98 }}
@@ -87,8 +85,8 @@ function LuxuryMapCard() {
                 <div className="flex items-start gap-3">
                   <MapPin className="mt-1 h-5 w-5 text-primary" />
                   <div>
-                    <p className="text-sm font-black text-white">Perdana Kampial Cluster</p>
-                    <p className="mt-1 text-xs leading-6 text-gray-400">Perdana VI No.3, Nusa Dua, Bali - Indonesia</p>
+                    <p className="text-sm font-black text-white">Area Layanan & Kantor</p>
+                    <p className="mt-1 text-xs leading-6 text-gray-400">{address}</p>
                   </div>
                 </div>
               </div>
@@ -97,7 +95,7 @@ function LuxuryMapCard() {
                   <Phone className="mt-1 h-5 w-5 text-primary" />
                   <div>
                     <p className="text-sm font-black text-white">WhatsApp Booking</p>
-                    <p className="mt-1 text-xs leading-6 text-gray-400">+62 813 5368 1757</p>
+                    <p className="mt-1 text-xs leading-6 text-gray-400">{phone}</p>
                   </div>
                 </div>
               </div>
@@ -107,7 +105,7 @@ function LuxuryMapCard() {
               <motion.a
                 whileHover={{ y: -2, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                href={GOOGLE_MAPS_URL}
+                href={googleMapsUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-4 text-sm font-black text-dark shadow-gold"
@@ -117,7 +115,7 @@ function LuxuryMapCard() {
               <motion.a
                 whileHover={{ y: -2, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                href="https://wa.me/6281353681757"
+                href={getWhatsAppUrl('Halo Luxury Massage Bali, saya ingin reservasi/tanya jadwal.')}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-white hover:border-primary/40"
@@ -166,6 +164,7 @@ function LuxuryMapCard() {
 export default function DynamicPage() {
   const params = useParams();
   const location = useLocation();
+  const { getWhatsAppUrl, googleMapsUrl } = useContactSettings();
   const slug = (params.slug ?? location.pathname.replace(/^\//, '')) || 'tentang';
   const { data } = useQuery({ queryKey: ['page', slug], queryFn: () => fetchPage(slug) });
   const fallback = fallbackPages[slug] ?? { title: 'Luxury Massage Bali', excerpt: 'Informasi Luxury Massage Bali', content: 'Konten halaman sedang disiapkan melalui dashboard admin.' };
@@ -191,8 +190,8 @@ export default function DynamicPage() {
             <div className="grid gap-8 border-t border-white/10 p-8 md:grid-cols-[1fr_320px] md:p-14">
               <article className="prose prose-invert max-w-none text-gray-300"><p className="whitespace-pre-line text-lg leading-9">{renderPageContent(page.content)}</p></article>
               <aside className="space-y-4">
-                <a href={buildWhatsAppUrl(page.title)} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-4 font-bold text-dark transition-all hover:shadow-gold"><MessageCircle className="h-5 w-5" /> Book Appointment</a>
-                <a href={GOOGLE_MAPS_URL} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 font-semibold text-white hover:border-primary/40"><MapPin className="h-5 w-5" /> Lihat Maps</a>
+                <a href={getWhatsAppUrl(`Halo Luxury Massage Bali, saya ingin booking/konsultasi tentang ${page.title}.`)} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-4 font-bold text-dark transition-all hover:shadow-gold"><MessageCircle className="h-5 w-5" /> Book Appointment</a>
+                <a href={googleMapsUrl} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 font-semibold text-white hover:border-primary/40"><MapPin className="h-5 w-5" /> Lihat Maps</a>
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-5"><Calendar className="h-5 w-5 text-primary" /><p className="mt-3 text-sm text-gray-400">Reservasi home service tersedia setiap hari dengan konfirmasi jadwal via WhatsApp.</p></div>
               </aside>
             </div>

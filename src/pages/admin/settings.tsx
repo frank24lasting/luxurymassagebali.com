@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Building2, CalendarClock, Globe, Image as ImageIcon, MapPin, Menu, MessageCircle, Palette, Save, Search, Settings, Shield, Sparkles, Trash2, CheckCircle2 } from 'lucide-react';
+import { Building2, CalendarClock, Globe, Image as ImageIcon, MapPin, Menu, MessageCircle, MessageSquare, Palette, Save, Search, Settings, Shield, Sparkles, Trash2, CheckCircle2, PhoneCall, Mail, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
 import { MediaPickerButton } from '@/components/ui/media-picker';
@@ -375,8 +375,140 @@ export default function AdminSettings() {
             </div>
           )}
 
+          {/* Dedicated Contact & Global WhatsApp Manager */}
+          {active === 'contact_info' && (
+            <div className="mt-6 space-y-8">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <h3 className="text-lg font-bold text-white">Pengaturan Nomor WhatsApp & Kontak Global</h3>
+                </div>
+                <p className="mt-1 text-sm text-gray-400">
+                  Mengubah nomor WhatsApp dan kontak di sini akan otomatis mengubah seluruh tombol WhatsApp di seluruh website secara realtime (Floating button, Booking Form, Homepage Menu, Footer, Layanan, dan Halaman Kontak).
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 backdrop-blur-sm">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-400">✦ Live WhatsApp Preview & Test</span>
+                    <p className="mt-1 text-sm font-bold text-white">
+                      Nomor Aktif: <code className="text-primary font-mono">{String(draft.whatsapp || draft.phone || '+6281353681757')}</code>
+                    </p>
+                  </div>
+                  <a
+                    href={`https://wa.me/${String(draft.whatsapp || draft.phone || '6281353681757').replace(/\D/g, '')}?text=${encodeURIComponent('Halo Luxury Massage Bali, ini adalah pesan uji coba kontak WhatsApp.')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 text-xs font-bold text-white shadow-[0_4px_20px_rgba(37,211,102,0.35)] transition hover:bg-[#20bd5a]"
+                  >
+                    <MessageSquare className="h-4 w-4" /> Tes Buka WhatsApp
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" /> Nomor WhatsApp (whatsapp)
+                  </span>
+                  <p className="mt-1 text-xs text-gray-400">Nomor WhatsApp untuk seluruh tombol chat dan reservasi (contoh: +6281353681757 atau 081353681757).</p>
+                  <input
+                    type="text"
+                    value={String(draft.whatsapp ?? '')}
+                    onChange={(e) => updateDraft('whatsapp', e.target.value)}
+                    placeholder="+6281353681757"
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white font-mono text-sm outline-none transition focus:border-primary"
+                  />
+                </label>
+
+                <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <PhoneCall className="h-4 w-4" /> Nomor Telepon (phone)
+                  </span>
+                  <p className="mt-1 text-xs text-gray-400">Nomor telepon resmi yang ditampilkan pada info footer & kontak.</p>
+                  <input
+                    type="text"
+                    value={String(draft.phone ?? '')}
+                    onChange={(e) => updateDraft('phone', e.target.value)}
+                    placeholder="+62 813 5368 1757"
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white font-mono text-sm outline-none transition focus:border-primary"
+                  />
+                </label>
+
+                <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <Mail className="h-4 w-4" /> Email Resmi (email)
+                  </span>
+                  <p className="mt-1 text-xs text-gray-400">Alamat email resmi untuk info kontak dan footer.</p>
+                  <input
+                    type="email"
+                    value={String(draft.email ?? '')}
+                    onChange={(e) => updateDraft('email', e.target.value)}
+                    placeholder="hello@luxurymassagebali.com"
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white text-sm outline-none transition focus:border-primary"
+                  />
+                </label>
+
+                <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <MapPin className="h-4 w-4" /> URL Google Maps (google_maps_url)
+                  </span>
+                  <p className="mt-1 text-xs text-gray-400">Link navigasi Google Maps untuk tombol 'Open Google Maps'.</p>
+                  <input
+                    type="text"
+                    value={String(draft.google_maps_url ?? '')}
+                    onChange={(e) => updateDraft('google_maps_url', e.target.value)}
+                    placeholder="https://maps.app.goo.gl/..."
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white text-sm outline-none transition focus:border-primary font-mono"
+                  />
+                </label>
+
+                <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4 md:col-span-2">
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <MapPin className="h-4 w-4" /> Alamat / Area Layanan (address)
+                  </span>
+                  <p className="mt-1 text-xs text-gray-400">Alamat kantor atau keterangan area layanan home service yang tampil di footer & kontak.</p>
+                  <textarea
+                    rows={2}
+                    value={String(draft.address ?? '')}
+                    onChange={(e) => updateDraft('address', e.target.value)}
+                    placeholder="Bali, Indonesia"
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white text-sm outline-none transition focus:border-primary"
+                  />
+                </label>
+
+                <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <Clock className="h-4 w-4" /> Jam Buka (open_hour)
+                  </span>
+                  <input
+                    type="text"
+                    value={String(draft.open_hour ?? '')}
+                    onChange={(e) => updateDraft('open_hour', e.target.value)}
+                    placeholder="09:00"
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white font-mono text-sm outline-none transition focus:border-primary"
+                  />
+                </label>
+
+                <label className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <Clock className="h-4 w-4" /> Jam Tutup (close_hour)
+                  </span>
+                  <input
+                    type="text"
+                    value={String(draft.close_hour ?? '')}
+                    onChange={(e) => updateDraft('close_hour', e.target.value)}
+                    placeholder="21:00"
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white font-mono text-sm outline-none transition focus:border-primary"
+                  />
+                </label>
+              </div>
+            </div>
+          )}
+
           {/* Generic Editor for other tabs */}
-          {active !== 'branding' && (
+          {active !== 'branding' && active !== 'contact_info' && (
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               {Object.entries(draft).map(([key, value]) => (
                 <label key={key} className="block">
@@ -395,7 +527,7 @@ export default function AdminSettings() {
           <div className="mt-8 rounded-2xl border border-primary/20 bg-primary/10 p-5 flex items-start gap-3">
             <Sparkles className="h-5 w-5 text-primary shrink-0 mt-0.5" />
             <p className="text-xs leading-relaxed text-gray-300">
-              Semua konfigurasi logo dan branding otomatis tersimpan di Supabase (<code className="text-primary font-mono">site_settings</code>) dan langsung diterapkan secara realtime di seluruh komponen website (Navbar, Sticky Scroll, Footer, Sidebar Admin, dan Halaman Login).
+              Semua konfigurasi logo, WhatsApp, dan branding otomatis tersimpan di Supabase (<code className="text-primary font-mono">site_settings</code>) dan langsung diterapkan secara realtime di seluruh komponen website.
             </p>
           </div>
         </main>

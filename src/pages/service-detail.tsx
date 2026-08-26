@@ -5,6 +5,7 @@ import { ArrowLeft, CheckCircle2, Clock, MessageCircle } from 'lucide-react';
 import { SEOHead } from '@/components/seo/seo-head';
 import { supabase } from '@/lib/supabase';
 import { formatPrice } from '@/lib/utils';
+import { useContactSettings } from '@/lib/contact';
 import type { Service, ServicePrice } from '@/lib/types';
 
 async function fetchService(slug: string): Promise<Service | null> {
@@ -18,22 +19,9 @@ async function fetchService(slug: string): Promise<Service | null> {
   return data;
 }
 
-function buildWhatsAppUrl(name: string, selectedPrice?: ServicePrice): string {
-  const selectedText = selectedPrice
-    ? `${selectedPrice.label} - ${formatPrice(selectedPrice.price)}`
-    : 'Standard';
-  const text = [
-    `Halo Luxury Massage Bali, saya ingin booking ${name}.`,
-    '',
-    `Pilihan treatment: ${selectedText}`,
-    selectedPrice?.duration_minutes ? `Durasi: ${selectedPrice.duration_minutes} menit` : '',
-  ].filter(Boolean).join('\n');
-
-  return `https://wa.me/6281353681757?text=${encodeURIComponent(text)}`;
-}
-
 export default function ServiceDetail() {
   const { slug = '' } = useParams();
+  const { getWhatsAppUrl } = useContactSettings();
   const { data: service, isLoading } = useQuery({
     queryKey: ['service', slug],
     queryFn: () => fetchService(slug),
@@ -48,6 +36,20 @@ export default function ServiceDetail() {
   const selectedPrice = sortedPrices.find((price) => price.id === selectedPriceId) ?? sortedPrices[0];
   const lowestPrice = sortedPrices.length > 0 ? Math.min(...sortedPrices.map((price) => price.price)) : (service?.price ?? 0);
   const durationLabel = selectedPrice?.label ?? (service?.duration_minutes ? `${service.duration_minutes} Minutes` : 'Flexible');
+
+  function buildWhatsAppUrl(name: string, priceItem?: ServicePrice): string {
+    const selectedText = priceItem
+      ? `${priceItem.label} - ${formatPrice(priceItem.price)}`
+      : 'Standard';
+    const text = [
+      `Halo Luxury Massage Bali, saya ingin booking ${name}.`,
+      '',
+      `Pilihan treatment: ${selectedText}`,
+      priceItem?.duration_minutes ? `Durasi: ${priceItem.duration_minutes} menit` : '',
+    ].filter(Boolean).join('\n');
+
+    return getWhatsAppUrl(text);
+  }
 
   useEffect(() => {
     if (sortedPrices.length > 0 && !selectedPriceId) setSelectedPriceId(sortedPrices[0].id);

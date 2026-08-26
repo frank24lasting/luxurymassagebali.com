@@ -131,25 +131,25 @@ export function Navbar() {
   );
 
   return (
-    <header className={cn('fixed inset-x-0 top-0 z-50 border-b transition-all duration-300', isScrolled || isMenuOpen || isSearchOpen ? 'border-white/10 bg-dark/95 shadow-glass py-1' : 'border-transparent bg-dark/85 py-2')}>
+    <header className={cn('fixed inset-x-0 top-0 z-50 border-b transition-all duration-300', isScrolled || isMenuOpen || isSearchOpen ? 'border-white/10 bg-dark/95 shadow-glass py-1.5' : 'border-transparent bg-dark/85 py-2.5')}>
       <nav className="section-container" aria-label="Navigasi utama">
-        <div className="flex min-h-[4.75rem] md:min-h-[5.5rem] items-center justify-between gap-4">
+        <div className="flex min-h-[5rem] md:min-h-[6rem] lg:min-h-[6.5rem] items-center justify-between gap-4">
           <Link to="/" className="flex min-w-0 items-center gap-3 py-1" aria-label={`${siteName} beranda`}>
             {currentLogo ? (
               <img
                 src={currentLogo}
                 alt={`${siteName} logo`}
-                width="240"
-                height="64"
+                width="300"
+                height="80"
                 decoding="async"
-                className="h-14 sm:h-16 md:h-18 lg:h-20 w-auto max-w-[220px] sm:max-w-[280px] md:max-w-[340px] object-contain drop-shadow-md transition-all duration-300"
+                className="h-16 sm:h-20 md:h-24 lg:h-28 w-auto max-w-[260px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[480px] object-contain drop-shadow-lg transition-all duration-300"
               />
             ) : (
               <>
-                <img src="/favicon.svg" alt="" width="52" height="52" className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
+                <img src="/favicon.svg" alt="" width="56" height="56" className="h-14 w-14 shrink-0 sm:h-16 sm:w-16" />
                 <span className="min-w-0">
-                  <span className="block truncate font-heading text-xl font-bold leading-tight text-white sm:text-2xl">{siteName}</span>
-                  <span className="hidden truncate text-[11px] font-semibold uppercase tracking-[0.2em] text-primary sm:block">{tagline}</span>
+                  <span className="block truncate font-heading text-2xl font-bold leading-tight text-white sm:text-3xl">{siteName}</span>
+                  <span className="hidden truncate text-xs font-semibold uppercase tracking-[0.2em] text-primary sm:block">{tagline}</span>
                 </span>
               </>
             )}

@@ -4,6 +4,7 @@ import { CalendarDays, Clock, MapPin, MessageCircle, Phone, Sparkles, Star, User
 import { SEOHead } from '@/components/seo/seo-head';
 import { supabase } from '@/lib/supabase';
 import { formatPrice } from '@/lib/utils';
+import { useContactSettings } from '@/lib/contact';
 import type { ServicePrice } from '@/lib/types';
 
 interface ServiceOption {
@@ -26,7 +27,6 @@ interface AppointmentDraft {
   readonly special_request: string;
 }
 
-const whatsappNumber = '6281353681757';
 const today = new Date().toISOString().slice(0, 10);
 const timeSlots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
 
@@ -60,6 +60,7 @@ function buildWhatsAppMessage(draft: AppointmentDraft, service?: ServiceOption, 
 }
 
 export default function Appointment() {
+  const { getWhatsAppUrl } = useContactSettings();
   const { data: services = [] } = useQuery({ queryKey: ['booking-services'], queryFn: fetchServices });
   const [draft, setDraft] = useState<AppointmentDraft>({
     customer_name: '',
@@ -106,7 +107,7 @@ export default function Appointment() {
     },
     onSuccess: () => {
       const message = buildWhatsAppMessage(draft, selectedService, selectedPrice);
-      window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      window.location.href = getWhatsAppUrl(message);
     },
   });
 

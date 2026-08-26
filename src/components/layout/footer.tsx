@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
 import { useBrandingSettings } from '@/lib/branding';
+import { useContactSettings } from '@/lib/contact';
 
 const footerLinks = {
   layanan: [
@@ -28,6 +29,7 @@ const footerLinks = {
 
 export function Footer() {
   const { siteName, tagline, logoUrl, logoFooterUrl } = useBrandingSettings();
+  const { phone, email, address, openHour, closeHour, googleMapsUrl, getWhatsAppUrl } = useContactSettings();
   const currentYear = new Date().getFullYear();
   const displayLogo = logoFooterUrl || logoUrl;
 
@@ -41,17 +43,17 @@ export function Footer() {
                 <img
                   src={displayLogo}
                   alt={`${siteName} logo`}
-                  width="260"
-                  height="72"
+                  width="320"
+                  height="88"
                   loading="lazy"
                   decoding="async"
-                  className="h-16 sm:h-18 md:h-20 lg:h-24 w-auto max-w-[260px] sm:max-w-[320px] md:max-w-[380px] object-contain drop-shadow-md"
+                  className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto max-w-[320px] sm:max-w-[400px] md:max-w-[480px] object-contain drop-shadow-lg"
                 />
               ) : (
                 <>
-                  <img src="/favicon.svg" alt="" width="56" height="56" className="h-14 w-14 shrink-0" />
+                  <img src="/favicon.svg" alt="" width="64" height="64" className="h-16 w-16 shrink-0" />
                   <span>
-                    <span className="block font-heading text-2xl font-bold text-white">{siteName}</span>
+                    <span className="block font-heading text-2xl font-bold text-white sm:text-3xl">{siteName}</span>
                     <span className="block text-xs uppercase tracking-[0.2em] text-primary">{tagline}</span>
                   </span>
                 </>
@@ -60,7 +62,12 @@ export function Footer() {
             <p className="mt-5 max-w-md text-sm leading-7 text-text-muted">
               Massage dan wellness premium langsung ke hotel, villa, apartemen, atau rumah Anda di Bali. Privat, higienis, dan mudah dipesan.
             </p>
-            <a href="https://wa.me/6281353681757?text=Halo%20Luxury%20Massage%20Bali%2C%20saya%20ingin%20bertanya" target="_blank" rel="noreferrer" className="btn-primary mt-6 gap-2 text-sm">
+            <a
+              href={getWhatsAppUrl('Halo Luxury Massage Bali, saya ingin bertanya tentang layanan massage.')}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-primary mt-6 gap-2 text-sm"
+            >
               <MessageCircle className="h-4 w-4" /> Chat WhatsApp
             </a>
           </div>
@@ -71,10 +78,18 @@ export function Footer() {
         </div>
 
         <div className="mt-12 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-sm text-text-muted sm:grid-cols-2 lg:grid-cols-4">
-          <a href="https://maps.app.goo.gl/SbephNzX2QaKfiEB9?g_st=iwb" target="_blank" rel="noreferrer" className="flex items-start gap-3 transition hover:text-white"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> Bali, Indonesia</a>
-          <a href="tel:+6281353681757" className="flex items-center gap-3 transition hover:text-white"><Phone className="h-4 w-4 shrink-0 text-primary" /> +62 813 5368 1757</a>
-          <a href="mailto:hello@luxurymassagebali.com" className="flex items-center gap-3 transition hover:text-white"><Mail className="h-4 w-4 shrink-0 text-primary" /> hello@luxurymassagebali.com</a>
-          <span className="flex items-center gap-3"><Clock className="h-4 w-4 shrink-0 text-primary" /> Setiap hari, 09.00–21.00</span>
+          <a href={googleMapsUrl} target="_blank" rel="noreferrer" className="flex items-start gap-3 transition hover:text-white">
+            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {address}
+          </a>
+          <a href={`tel:${phone.replace(/\s+/g, '')}`} className="flex items-center gap-3 transition hover:text-white">
+            <Phone className="h-4 w-4 shrink-0 text-primary" /> {phone}
+          </a>
+          <a href={`mailto:${email}`} className="flex items-center gap-3 transition hover:text-white">
+            <Mail className="h-4 w-4 shrink-0 text-primary" /> {email}
+          </a>
+          <span className="flex items-center gap-3">
+            <Clock className="h-4 w-4 shrink-0 text-primary" /> Setiap hari, {openHour}–{closeHour}
+          </span>
         </div>
       </div>
 

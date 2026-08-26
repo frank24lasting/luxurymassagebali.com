@@ -293,7 +293,7 @@ function ArticleForm({ article, onClose, onSave }) {
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1.5">Focus Keyword</label>
-                  <input type="text" value={form.schema_markup?.focus_keyword || ''} onChange={e => setForm(f => ({ ...f, schema_markup: { ...f.schema_markup, focus_keyword: e.target.value } }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white" placeholder="balinese massage jimbaran" />
+                  <input type="text" value={form.schema_markup?.focus_keyword || ''} onChange={e => setForm(f => ({ ...f, schema_markup: { ...f.schema_markup, focus_keyword: e.target.value } }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white" placeholder="balinese massage bali" />
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1.5">Canonical URL</label>

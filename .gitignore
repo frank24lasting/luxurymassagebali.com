@@ -31,3 +31,6 @@ vite.config.js.timestamp-*
 # Temporary files
 *.tmp
 *.temp
+
+# Supabase migration backups — may contain customer data
+.supabase-migration-backups/

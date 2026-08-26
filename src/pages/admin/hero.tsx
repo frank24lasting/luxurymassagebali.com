@@ -163,7 +163,7 @@ function HeroFormModal({ slide, onClose, onSave }) {
               value={form.subheadline}
               onChange={e => setForm(f => ({ ...f, subheadline: e.target.value }))}
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-              placeholder="Professional spa treatments in the heart of Jimbaran"
+              placeholder="Professional luxury massage across Bali"
             />
           </div>
 

@@ -3,8 +3,8 @@
  * Run: npm run admin:create
  *
  * Required .env.local:
- * - VITE_SUPABASE_URL
- * - SUPABASE_SERVICE_ROLE_KEY
+ * - NEW_SUPABASE_URL (preferred during migration) or VITE_SUPABASE_URL
+ * - NEW_SUPABASE_SERVICE_ROLE_KEY (preferred) or SUPABASE_SERVICE_ROLE_KEY
  * - ADMIN_EMAIL
  * - ADMIN_PASSWORD
  */
@@ -14,14 +14,14 @@ import { createClient } from '@supabase/supabase-js';
 
 config({ path: '.env.local' });
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
-const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_URL = process.env.NEW_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const SERVICE_ROLE_KEY = process.env.NEW_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 if (!SUPABASE_URL || !SERVICE_ROLE_KEY || !ADMIN_EMAIL || !ADMIN_PASSWORD) {
   throw new Error(
-    'Missing required env vars: VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ADMIN_EMAIL, ADMIN_PASSWORD',
+    'Missing required Supabase URL, service-role key, ADMIN_EMAIL, or ADMIN_PASSWORD',
   );
 }
 

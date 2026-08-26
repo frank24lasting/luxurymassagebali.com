@@ -72,7 +72,17 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="section-container flex flex-col items-center justify-between gap-3 py-6 text-center text-xs text-text-muted sm:flex-row sm:text-left">
           <p>© {currentYear} {siteName}. All rights reserved.</p>
-          <p>Premium massage, delivered in Bali.</p>
+          <p>
+            DEVELOPS BY{' '}
+            <a
+              href="https://wa.me/628990090802"
+              target="_blank"
+              rel="noreferrer"
+              className="font-bold text-primary transition hover:underline"
+            >
+              TUKANGBUATWEBSITEBALI
+            </a>
+          </p>
         </div>
       </div>
     </footer>

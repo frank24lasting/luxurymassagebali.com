@@ -193,18 +193,18 @@ CREATE POLICY IF NOT EXISTS "pub_read_set" ON site_settings FOR SELECT USING (tr
 
 -- Seed
 INSERT INTO services (name, slug, description, duration_minutes, price, category, image_url, sort_order) VALUES
-('Balinese Massage', 'balinese-massage', 'Traditional Balinese massage technique using palm and thumb pressure to relieve muscle tension and promote deep relaxation.', 60, 350000, 'Massage', '${BASE_IMG(800)}/spa-jimbaran/services/balinese-massage.jpg', 0),
-('Hot Stone Massage', 'hot-stone-massage', 'Heated volcanic stones placed on key energy points to melt away stress, relax muscles, and restore body balance naturally.', 90, 450000, 'Massage', '${BASE_IMG(800)}/spa-jimbaran/services/hot-stone-massage.jpg', 1),
-('Herbal Facial', 'herbal-facial', 'Facial treatment using traditional Bali herbal ingredients to cleanse, nourish, and brighten skin for a healthy glow.', 75, 300000, 'Facial', '${BASE_IMG(800)}/spa-jimbaran/services/herbal-facial.jpg', 2),
-('Royal Lulur', 'royal-lulur', 'Ancient Javanese royal body scrub using turmeric, rice powder, and aromatic spices to exfoliate and brighten skin.', 120, 500000, 'Body Treatment', '${BASE_IMG(800)}/spa-jimbaran/services/royal-lulur.jpg', 3),
-('Aromatherapy Massage', 'aromatherapy-massage', 'Relaxing full-body massage with premium essential oils selected for stress relief, energy boost, or deep sleep.', 60, 380000, 'Massage', '${BASE_IMG(800)}/spa-jimbaran/services/aromatherapy.jpg', 4),
-('Couple Retreat Package', 'couple-retreat', 'Romantic spa package designed for couples — private room, side-by-side massage, flower bath, and champagne.', 150, 1200000, 'Couple Package', '${BASE_IMG(800)}/spa-jimbaran/services/couple-package.jpg', 5)
+('Balinese Massage', 'balinese-massage', 'Traditional Balinese massage technique using palm and thumb pressure to relieve muscle tension and promote deep relaxation.', 60, 350000, 'Massage', '${BASE_IMG(800)}/luxury-massage-bali/services/balinese-massage.jpg', 0),
+('Hot Stone Massage', 'hot-stone-massage', 'Heated volcanic stones placed on key energy points to melt away stress, relax muscles, and restore body balance naturally.', 90, 450000, 'Massage', '${BASE_IMG(800)}/luxury-massage-bali/services/hot-stone-massage.jpg', 1),
+('Herbal Facial', 'herbal-facial', 'Facial treatment using traditional Bali herbal ingredients to cleanse, nourish, and brighten skin for a healthy glow.', 75, 300000, 'Facial', '${BASE_IMG(800)}/luxury-massage-bali/services/herbal-facial.jpg', 2),
+('Royal Lulur', 'royal-lulur', 'Ancient Javanese royal body scrub using turmeric, rice powder, and aromatic spices to exfoliate and brighten skin.', 120, 500000, 'Body Treatment', '${BASE_IMG(800)}/luxury-massage-bali/services/royal-lulur.jpg', 3),
+('Aromatherapy Massage', 'aromatherapy-massage', 'Relaxing full-body massage with premium essential oils selected for stress relief, energy boost, or deep sleep.', 60, 380000, 'Massage', '${BASE_IMG(800)}/luxury-massage-bali/services/aromatherapy.jpg', 4),
+('Couple Retreat Package', 'couple-retreat', 'Romantic spa package designed for couples — private room, side-by-side massage, flower bath, and champagne.', 150, 1200000, 'Couple Package', '${BASE_IMG(800)}/luxury-massage-bali/services/couple-package.jpg', 5)
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO hero_slides (type, media_url, headline, subheadline, cta_text, cta_link, sort_order, is_active, animation_preset) VALUES
-('image', '${BASE_IMG(1920)}/spa-jimbaran/hero/hero-spa-entrance.jpg', 'Private Wellness, Delivered Across Bali', '✦ Luxury Home Massage ✦', 'Book Now', '/appointment', 0, true, 'kenburns'),
-('image', '${BASE_IMG(1920)}/spa-jimbaran/hero/hero-massage.jpg', 'Relaxasi Premium di Lokasi Anda', '✦ Professional Therapists ✦', 'Lihat Layanan', '/services', 1, true, 'fade'),
-('image', '${BASE_IMG(1920)}/spa-jimbaran/hero/hero-bath.jpg', 'Couple Massage untuk Momen Istimewa', '✦ Private Couple Experience ✦', 'Pesan Sekarang', '/appointment', 2, true, 'slide')
+('image', '${BASE_IMG(1920)}/luxury-massage-bali/hero/hero-spa-entrance.jpg', 'Private Wellness, Delivered Across Bali', '✦ Luxury Home Massage ✦', 'Book Now', '/appointment', 0, true, 'kenburns'),
+('image', '${BASE_IMG(1920)}/luxury-massage-bali/hero/hero-massage.jpg', 'Relaxasi Premium di Lokasi Anda', '✦ Professional Therapists ✦', 'Lihat Layanan', '/services', 1, true, 'fade'),
+('image', '${BASE_IMG(1920)}/luxury-massage-bali/hero/hero-bath.jpg', 'Couple Massage untuk Momen Istimewa', '✦ Private Couple Experience ✦', 'Pesan Sekarang', '/appointment', 2, true, 'slide')
 ON CONFLICT DO NOTHING;
 `;
 

@@ -78,7 +78,14 @@ export default function Appointment() {
 
   const createAppointment = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.from('appointments').insert({
+      const appointmentId = crypto.randomUUID();
+      const specialRequest = [
+        selectedPrice ? `Price Option: ${selectedPrice.label}` : '',
+        draft.special_request.trim(),
+      ].filter(Boolean).join('\n');
+
+      const { error } = await supabase.from('appointments').insert({
+        id: appointmentId,
         customer_name: draft.customer_name.trim(),
         customer_email: draft.customer_email.trim(),
         customer_phone: draft.customer_phone.trim(),
@@ -86,19 +93,16 @@ export default function Appointment() {
         appointment_date: draft.appointment_date,
         appointment_time: `${draft.appointment_time}:00`,
         therapist_preference: draft.therapist_preference,
-        special_request: draft.special_request.trim(),
+        special_request: specialRequest,
         status: 'pending',
-        admin_notes: selectedPrice ? `Price Option: ${selectedPrice.label}` : '',
-      }).select('id').single();
+      });
       if (error) throw new Error(error.message);
 
-      if (data?.id) {
-        fetch('/api/send-admin-order-push', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ appointmentId: data.id }),
-        }).catch(() => undefined);
-      }
+      fetch('/api/send-admin-order-push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appointmentId }),
+      }).catch(() => undefined);
     },
     onSuccess: () => {
       const message = buildWhatsAppMessage(draft, selectedService, selectedPrice);

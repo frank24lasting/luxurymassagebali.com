@@ -1,9 +1,17 @@
+import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://fubdkrbvtzopftqtrieq.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1YmRrcmJ2dHpvcGZ0cXRyaWVxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzI0MDc0OSwiZXhwIjoyMDk4ODE2NzQ5fQ.-yi1P4yi3HJma3V81raEoE48alr0r5DO-IfDGhDGuBE';
+config({ path: '.env.local', quiet: true });
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing VITE_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.');
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: { autoRefreshToken: false, persistSession: false },
+});
 
 // Check if service_prices table exists
 const { error } = await supabase.from('service_prices').select('id').limit(1);
@@ -45,13 +53,13 @@ ALTER TABLE services ALTER COLUMN duration_minutes DROP NOT NULL;`);
   process.exit(1);
 } else {
   console.log('✅ Table service_prices exists');
-  
+
   // Show current prices
   const { data: prices } = await supabase
     .from('service_prices')
     .select('*, services(name)')
     .order('created_at', { ascending: false })
     .limit(5);
-  
+
   console.log('Sample prices:', JSON.stringify(prices, null, 2));
 }

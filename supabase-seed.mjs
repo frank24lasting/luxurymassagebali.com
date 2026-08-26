@@ -97,12 +97,12 @@ async function seed() {
   // --- Services ---
   console.log('📦 Seeding services...\n');
   const services = [
-    { name: 'Balinese Massage', slug: 'balinese-massage', description: 'Traditional Balinese massage technique using palm and thumb pressure to relieve muscle tension and promote deep relaxation.', duration_minutes: 60, price: 350000, category: 'Massage', image_url: `${BASE_IMG(800)}/spa-jimbaran/services/balinese-massage.jpg`, sort_order: 0 },
-    { name: 'Hot Stone Massage', slug: 'hot-stone-massage', description: 'Heated volcanic stones placed on key energy points to melt away stress, relax muscles, and restore body balance naturally.', duration_minutes: 90, price: 450000, category: 'Massage', image_url: `${BASE_IMG(800)}/spa-jimbaran/services/hot-stone-massage.jpg`, sort_order: 1 },
-    { name: 'Herbal Facial', slug: 'herbal-facial', description: 'Facial treatment using traditional Bali herbal ingredients to cleanse, nourish, and brighten skin for a healthy glow.', duration_minutes: 75, price: 300000, category: 'Facial', image_url: `${BASE_IMG(800)}/spa-jimbaran/services/herbal-facial.jpg`, sort_order: 2 },
-    { name: 'Royal Lulur', slug: 'royal-lulur', description: 'Ancient Javanese royal body scrub using turmeric, rice powder, and aromatic spices to exfoliate and brighten skin.', duration_minutes: 120, price: 500000, category: 'Body Treatment', image_url: `${BASE_IMG(800)}/spa-jimbaran/services/royal-lulur.jpg`, sort_order: 3 },
-    { name: 'Aromatherapy Massage', slug: 'aromatherapy-massage', description: 'Relaxing full-body massage with premium essential oils selected for stress relief, energy boost, or deep sleep.', duration_minutes: 60, price: 380000, category: 'Massage', image_url: `${BASE_IMG(800)}/spa-jimbaran/services/aromatherapy.jpg`, sort_order: 4 },
-    { name: 'Couple Retreat Package', slug: 'couple-retreat', description: 'Romantic spa package designed for couples — private room, side-by-side massage, flower bath, and champagne.', duration_minutes: 150, price: 1200000, category: 'Couple Package', image_url: `${BASE_IMG(800)}/spa-jimbaran/services/couple-package.jpg`, sort_order: 5 },
+    { name: 'Balinese Massage', slug: 'balinese-massage', description: 'Traditional Balinese massage technique using palm and thumb pressure to relieve muscle tension and promote deep relaxation.', duration_minutes: 60, price: 350000, category: 'Massage', image_url: `${BASE_IMG(800)}/luxury-massage-bali/services/balinese-massage.jpg`, sort_order: 0 },
+    { name: 'Hot Stone Massage', slug: 'hot-stone-massage', description: 'Heated volcanic stones placed on key energy points to melt away stress, relax muscles, and restore body balance naturally.', duration_minutes: 90, price: 450000, category: 'Massage', image_url: `${BASE_IMG(800)}/luxury-massage-bali/services/hot-stone-massage.jpg`, sort_order: 1 },
+    { name: 'Herbal Facial', slug: 'herbal-facial', description: 'Facial treatment using traditional Bali herbal ingredients to cleanse, nourish, and brighten skin for a healthy glow.', duration_minutes: 75, price: 300000, category: 'Facial', image_url: `${BASE_IMG(800)}/luxury-massage-bali/services/herbal-facial.jpg`, sort_order: 2 },
+    { name: 'Royal Lulur', slug: 'royal-lulur', description: 'Ancient Javanese royal body scrub using turmeric, rice powder, and aromatic spices to exfoliate and brighten skin.', duration_minutes: 120, price: 500000, category: 'Body Treatment', image_url: `${BASE_IMG(800)}/luxury-massage-bali/services/royal-lulur.jpg`, sort_order: 3 },
+    { name: 'Aromatherapy Massage', slug: 'aromatherapy-massage', description: 'Relaxing full-body massage with premium essential oils selected for stress relief, energy boost, or deep sleep.', duration_minutes: 60, price: 380000, category: 'Massage', image_url: `${BASE_IMG(800)}/luxury-massage-bali/services/aromatherapy.jpg`, sort_order: 4 },
+    { name: 'Couple Retreat Package', slug: 'couple-retreat', description: 'Romantic spa package designed for couples — private room, side-by-side massage, flower bath, and champagne.', duration_minutes: 150, price: 1200000, category: 'Couple Package', image_url: `${BASE_IMG(800)}/luxury-massage-bali/services/couple-package.jpg`, sort_order: 5 },
   ];
 
   for (const s of services) {
@@ -115,9 +115,9 @@ async function seed() {
   // --- Hero Slides ---
   console.log('\n🎬 Seeding hero slides...\n');
   const slides = [
-    { type: 'image', media_url: `${BASE_IMG(1920)}/spa-jimbaran/hero/hero-spa-entrance.jpg`, headline: 'Private Wellness, Delivered Across Bali', subheadline: '✦ Luxury Home Massage ✦', cta_text: 'Book Now', cta_link: '/appointment', sort_order: 0, is_active: true, animation_preset: 'kenburns' },
-    { type: 'image', media_url: `${BASE_IMG(1920)}/spa-jimbaran/hero/hero-massage.jpg`, headline: 'Relaxasi Premium di Lokasi Anda', subheadline: '✦ Professional Therapists ✦', cta_text: 'Lihat Layanan', cta_link: '/services', sort_order: 1, is_active: true, animation_preset: 'fade' },
-    { type: 'image', media_url: `${BASE_IMG(1920)}/spa-jimbaran/hero/hero-bath.jpg`, headline: 'Couple Massage untuk Momen Istimewa', subheadline: '✦ Private Couple Experience ✦', cta_text: 'Pesan Sekarang', cta_link: '/appointment', sort_order: 2, is_active: true, animation_preset: 'slide' },
+    { type: 'image', media_url: `${BASE_IMG(1920)}/luxury-massage-bali/hero/hero-spa-entrance.jpg`, headline: 'Private Wellness, Delivered Across Bali', subheadline: '✦ Luxury Home Massage ✦', cta_text: 'Book Now', cta_link: '/appointment', sort_order: 0, is_active: true, animation_preset: 'kenburns' },
+    { type: 'image', media_url: `${BASE_IMG(1920)}/luxury-massage-bali/hero/hero-massage.jpg`, headline: 'Relaxasi Premium di Lokasi Anda', subheadline: '✦ Professional Therapists ✦', cta_text: 'Lihat Layanan', cta_link: '/services', sort_order: 1, is_active: true, animation_preset: 'fade' },
+    { type: 'image', media_url: `${BASE_IMG(1920)}/luxury-massage-bali/hero/hero-bath.jpg`, headline: 'Couple Massage untuk Momen Istimewa', subheadline: '✦ Private Couple Experience ✦', cta_text: 'Pesan Sekarang', cta_link: '/appointment', sort_order: 2, is_active: true, animation_preset: 'slide' },
   ];
 
   for (const s of slides) {

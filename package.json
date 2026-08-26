@@ -12,7 +12,18 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "admin:create": "node admin-create.mjs"
+    "admin:create": "node admin-create.mjs",
+    "supabase:migrate:dry": "node supabase-migrate-dry-run.mjs",
+    "supabase:schema:check": "node supabase-compare-schema.mjs",
+    "supabase:schema:apply": "node supabase-apply-schema.mjs",
+    "supabase:migrate": "node supabase-migrate.mjs",
+    "supabase:verify": "node supabase-verify.mjs",
+    "supabase:smoke": "node supabase-smoke-test.mjs",
+    "supabase:cutover": "node supabase-cutover.mjs --apply",
+    "supabase:cutover:rollback": "node supabase-cutover.mjs --rollback",
+    "cloudinary:audit": "node cloudinary-audit.mjs",
+    "cloudinary:migrate:dry": "node cloudinary-migrate.mjs --dry-run",
+    "cloudinary:migrate": "node cloudinary-migrate.mjs --apply"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.3.0",
@@ -55,6 +66,7 @@
     "autoprefixer": "^10.5.2",
     "dotenv": "^17.4.2",
     "oxlint": "^1.71.0",
+    "pg": "^8.16.3",
     "postcss": "^8.5.16",
     "tailwindcss": "^3.4.19",
     "typescript": "~6.0.2",

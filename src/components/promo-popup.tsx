@@ -17,7 +17,7 @@ interface PopupConfig {
   title?: string;
 }
 
-const SESSION_KEY = 'spa_jimbaran_popup_shown';
+const SESSION_KEY = 'luxury_massage_bali_popup_shown';
 
 export function PromoPopup() {
   const navigate = useNavigate();

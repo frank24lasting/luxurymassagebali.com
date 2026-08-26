@@ -108,7 +108,7 @@ export function BottomNav() {
         </div>
       </nav>
 
-      {/* Scroll to Top Button */}
+      {/* Scroll to Top Button (Left side to avoid WhatsApp collision) */}
       {showScrollTop && (
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
@@ -116,10 +116,10 @@ export function BottomNav() {
           exit={{ opacity: 0, scale: 0.8 }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}
-          className="fixed bottom-20 right-4 z-40 md:hidden w-10 h-10 rounded-full bg-primary text-dark shadow-gold flex items-center justify-center"
+          className="fixed bottom-20 left-4 z-40 w-11 h-11 rounded-full bg-primary text-dark shadow-gold flex items-center justify-center border border-white/20 transition-all hover:scale-105 active:scale-95 md:bottom-8 md:left-8"
           aria-label="Scroll to top"
         >
-          <ChevronUp className="w-5 h-5" />
+          <ChevronUp className="w-5 h-5 text-dark font-bold" />
         </motion.button>
       )}
 

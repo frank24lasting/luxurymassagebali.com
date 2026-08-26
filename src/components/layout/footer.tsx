@@ -36,15 +36,23 @@ export function Footer() {
       <div className="section-container py-12 lg:py-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
-            <Link to="/" className="inline-flex max-w-full items-center gap-3" aria-label={`${siteName} beranda`}>
+            <Link to="/" className="inline-flex max-w-full items-center gap-3 py-1" aria-label={`${siteName} beranda`}>
               {displayLogo ? (
-                <img src={displayLogo} alt={`${siteName} logo`} width="180" height="52" loading="lazy" decoding="async" className="h-12 w-auto max-w-[220px] object-contain" />
+                <img
+                  src={displayLogo}
+                  alt={`${siteName} logo`}
+                  width="260"
+                  height="72"
+                  loading="lazy"
+                  decoding="async"
+                  className="h-16 sm:h-18 md:h-20 lg:h-24 w-auto max-w-[260px] sm:max-w-[320px] md:max-w-[380px] object-contain drop-shadow-md"
+                />
               ) : (
                 <>
-                  <img src="/favicon.svg" alt="" width="48" height="48" className="h-12 w-12" />
+                  <img src="/favicon.svg" alt="" width="56" height="56" className="h-14 w-14 shrink-0" />
                   <span>
-                    <span className="block font-heading text-xl font-semibold text-white">{siteName}</span>
-                    <span className="block text-[10px] uppercase tracking-[0.18em] text-primary">{tagline}</span>
+                    <span className="block font-heading text-2xl font-bold text-white">{siteName}</span>
+                    <span className="block text-xs uppercase tracking-[0.2em] text-primary">{tagline}</span>
                   </span>
                 </>
               )}

@@ -72,7 +72,7 @@ export default function AdminLayout() {
   const [errorPageKey, setErrorPageKey] = useState(0);
   const seenRealtimeIds = useRef(new Set<string>());
   const queryClient = useQueryClient();
-  const { siteName, logoUrl, logoAdminUrl, logoSizeAdmin } = useBrandingSettings();
+  const { siteName, logoUrl, logoAdminUrl } = useBrandingSettings();
   const adminLogoSrc = logoAdminUrl || logoUrl;
 
   // Recovery when user returns to the tab
@@ -125,19 +125,19 @@ export default function AdminLayout() {
         collapsed ? "w-20" : "w-64"
       )}>
         {/* Logo */}
-        <div className="h-16 flex items-center px-4 border-b border-white/5">
+        <div className="h-20 flex items-center px-4 border-b border-white/5">
           <Link to="/langitdewata" className="flex items-center min-w-0" aria-label={siteName}>
             {adminLogoSrc ? (
-              <img src={adminLogoSrc} alt={`${siteName} admin logo`} style={{ height: `${logoSizeAdmin}px` }} className="w-auto max-w-[220px] object-contain" />
+              <img src={adminLogoSrc} alt={`${siteName} admin logo`} className="max-h-14 w-auto max-w-[200px] object-contain drop-shadow" />
             ) : (
               <>
-                <div className="w-10 h-10 rounded-xl bg-gradient-gold flex items-center justify-center shadow-gold flex-shrink-0">
+                <div className="w-11 h-11 rounded-xl bg-gradient-gold flex items-center justify-center shadow-gold flex-shrink-0">
                   <span className="text-dark font-heading font-bold text-lg">{siteName.charAt(0).toUpperCase()}</span>
                 </div>
                 {!collapsed && (
                   <div className="min-w-0 ml-3">
-                    <span className="block truncate text-white font-heading font-semibold">{siteName}</span>
-                    <p className="text-[10px] text-primary -mt-0.5 tracking-widest uppercase">Admin Panel</p>
+                    <span className="block truncate text-white font-heading font-semibold text-base">{siteName}</span>
+                    <p className="text-[10px] text-primary -mt-0.5 tracking-widest uppercase font-bold">Admin Panel</p>
                   </div>
                 )}
               </>
@@ -240,10 +240,10 @@ export default function AdminLayout() {
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="lg:hidden fixed left-0 top-0 h-full w-72 bg-dark-lighter border-r border-white/5 z-50 flex flex-col"
           >
-            <div className="h-16 flex items-center justify-between px-4 border-b border-white/5">
+            <div className="h-20 flex items-center justify-between px-4 border-b border-white/5">
               <div className="flex items-center min-w-0">
                 {adminLogoSrc ? (
-                  <img src={adminLogoSrc} alt={`${siteName} admin logo`} style={{ height: `${logoSizeAdmin}px` }} className="w-auto max-w-[220px] object-contain" />
+                  <img src={adminLogoSrc} alt={`${siteName} admin logo`} className="max-h-12 w-auto max-w-[190px] object-contain drop-shadow" />
                 ) : (
                   <>
                     <div className="w-10 h-10 rounded-xl bg-gradient-gold flex items-center justify-center">
@@ -251,7 +251,7 @@ export default function AdminLayout() {
                     </div>
                     <div className="min-w-0 ml-3">
                       <span className="block truncate text-white font-heading font-semibold">{siteName}</span>
-                      <p className="text-[10px] text-primary -mt-0.5 tracking-widest uppercase">Admin</p>
+                      <p className="text-[10px] text-primary -mt-0.5 tracking-widest uppercase font-bold">Admin</p>
                     </div>
                   </>
                 )}

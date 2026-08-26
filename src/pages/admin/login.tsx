@@ -57,12 +57,12 @@ export default function AdminLogin() {
         <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-dark-lighter shadow-2xl">
           <div className="border-b border-white/5 p-8 text-center">
             {logoLoginUrl ? (
-              <div className="mx-auto mb-5 flex h-20 items-center justify-center max-w-[240px]">
-                <img src={logoLoginUrl} alt={`${siteName} login logo`} className="h-full w-auto max-w-full object-contain" />
+              <div className="mx-auto mb-6 flex h-24 sm:h-28 items-center justify-center max-w-[280px]">
+                <img src={logoLoginUrl} alt={`${siteName} login logo`} className="max-h-24 sm:max-h-28 w-auto max-w-full object-contain drop-shadow-md" />
               </div>
             ) : (
-              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-brand shadow-clean">
-                <ShieldCheck className="h-8 w-8 text-white" />
+              <div className="mx-auto mb-5 flex h-18 w-18 items-center justify-center rounded-2xl bg-gradient-brand shadow-clean">
+                <ShieldCheck className="h-9 w-9 text-white" />
               </div>
             )}
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">

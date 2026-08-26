@@ -1,0 +1,18 @@
+{
+  "name": "Luxury Massage Bali",
+  "short_name": "Luxury Massage",
+  "description": "Premium massage and wellness delivered across Bali",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#19322c",
+  "theme_color": "#214038",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

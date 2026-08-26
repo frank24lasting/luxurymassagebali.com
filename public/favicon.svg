@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Luxury Massage Bali">
+  <defs>
+    <linearGradient id="brand" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#19322c"/>
+      <stop offset="1" stop-color="#214038"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#brand)"/>
+  <path d="M32 49c-9-6-14-14-14-24 7 1 12 4 14 10 2-6 7-9 14-10 0 10-5 18-14 24Z" fill="none" stroke="#dcebe4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 18v31" stroke="#a8c8ba" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

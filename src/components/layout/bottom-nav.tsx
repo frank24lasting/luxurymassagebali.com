@@ -60,13 +60,13 @@ export function BottomNav() {
                       <motion.div
                         whileTap={{ scale: 0.9 }}
                         className={cn(
-                          'w-14 h-14 rounded-full flex items-center justify-center shadow-gold-lg',
+                          'w-14 h-14 rounded-full flex items-center justify-center shadow-gold-lg border border-white/20',
                           'bg-gradient-gold transition-all duration-300'
                         )}
                       >
-                        <Icon className="w-6 h-6 text-dark" />
+                        <Icon className="w-6 h-6 text-white" />
                       </motion.div>
-                      <span className="mt-1 text-[10px] font-medium text-primary">
+                      <span className="mt-1 text-[10px] font-bold text-white">
                         {item.label}
                       </span>
                     </Link>

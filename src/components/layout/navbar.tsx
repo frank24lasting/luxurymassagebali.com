@@ -131,7 +131,7 @@ export function Navbar() {
   );
 
   return (
-    <header className={cn('fixed inset-x-0 top-0 z-50 border-b transition-all duration-300', isScrolled || isMenuOpen || isSearchOpen ? 'border-primary/10 bg-white/95 shadow-sm backdrop-blur-md py-1.5' : 'border-transparent bg-white/80 backdrop-blur-md py-2.5')}>
+    <header className={cn('fixed inset-x-0 top-0 z-50 border-b transition-all duration-300', isScrolled || isMenuOpen || isSearchOpen ? 'border-white/10 bg-dark/95 shadow-glass py-1.5 backdrop-blur-md' : 'border-transparent bg-dark/85 py-2.5 backdrop-blur-md')}>
       <nav className="section-container" aria-label="Navigasi utama">
         <div className="flex min-h-[5rem] md:min-h-[6rem] lg:min-h-[6.5rem] items-center justify-between gap-4">
           <Link to="/" className="flex min-w-0 items-center gap-3 py-1" aria-label={`${siteName} beranda`}>
@@ -142,16 +142,16 @@ export function Navbar() {
                 width="300"
                 height="80"
                 decoding="async"
-                className="h-16 sm:h-20 md:h-24 lg:h-28 w-auto max-w-[260px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[480px] object-contain drop-shadow-sm transition-all duration-300"
+                className="h-16 sm:h-20 md:h-24 lg:h-28 w-auto max-w-[260px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[480px] object-contain drop-shadow-lg transition-all duration-300"
               />
             ) : (
               <div className="flex items-center gap-3">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-gold shadow-sm">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-gold shadow-glass">
                   <Sparkles className="h-6 w-6 text-white" />
                 </div>
                 <span className="min-w-0">
-                  <span className="block truncate font-heading text-2xl font-bold leading-tight text-text-primary sm:text-3xl">{siteName}</span>
-                  <span className="hidden truncate text-xs font-semibold uppercase tracking-[0.2em] text-secondary sm:block">{tagline}</span>
+                  <span className="block truncate font-heading text-2xl font-bold leading-tight text-white sm:text-3xl">{siteName}</span>
+                  <span className="hidden truncate text-xs font-semibold uppercase tracking-[0.2em] text-primary sm:block">{tagline}</span>
                 </span>
               </div>
             )}
@@ -159,7 +159,7 @@ export function Navbar() {
 
           <div className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => (
-              <Link key={link.path} to={link.path} className={cn('rounded-lg px-3 py-2 text-sm font-semibold transition', location.pathname === link.path ? 'bg-primary/10 text-primary font-bold' : 'text-text-primary hover:bg-primary/5 hover:text-primary')}>
+              <Link key={link.path} to={link.path} className={cn('rounded-lg px-3 py-2 text-sm font-semibold transition', location.pathname === link.path ? 'bg-white/10 text-primary' : 'text-text-secondary hover:bg-white/[0.06] hover:text-white')}>
                 {link.label}
               </Link>
             ))}
@@ -167,14 +167,14 @@ export function Navbar() {
 
           <div className="flex items-center gap-2">
             <button id="navbar-search-toggle" type="button" onClick={() => { setIsSearchOpen((open) => !open); setIsMenuOpen(false); }} className="app-icon-button" aria-expanded={isSearchOpen} aria-controls="navbar-search-panel" aria-label="Cari">
-              {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
+              {isSearchOpen ? <X className="h-4 w-4 text-white" /> : <Search className="h-4 w-4 text-white" />}
             </button>
-            <button id="language-toggle" type="button" onClick={() => setLanguage(language === 'id' ? 'en' : 'id')} className="app-icon-button text-xs font-black text-text-primary" aria-label="Switch language">
+            <button id="language-toggle" type="button" onClick={() => setLanguage(language === 'id' ? 'en' : 'id')} className="app-icon-button text-xs font-black text-white" aria-label="Switch language">
               {language.toUpperCase()}
             </button>
             <Link to="/appointment" className="btn-primary hidden min-h-10 px-4 py-2 text-sm sm:inline-flex">{t('bookNow')}</Link>
             <button id="mobile-menu-toggle" type="button" onClick={() => { setIsMenuOpen((open) => !open); setIsSearchOpen(false); }} className="app-icon-button lg:hidden" aria-expanded={isMenuOpen} aria-controls="mobile-menu" aria-label="Buka menu">
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMenuOpen ? <X className="h-5 w-5 text-white" /> : <Menu className="h-5 w-5 text-white" />}
             </button>
           </div>
         </div>
@@ -182,15 +182,15 @@ export function Navbar() {
         {isSearchOpen && (
           <div id="navbar-search-panel" className="relative pb-4">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-[calc(50%+0.5rem)] text-primary" />
-            <input id="site-search" type="search" autoFocus autoComplete="off" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t('searchPlaceholder')} className="input-field h-12 pl-11 shadow-sm" />
+            <input id="site-search" type="search" autoFocus autoComplete="off" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t('searchPlaceholder')} className="input-field h-12 pl-11" />
             {searchPanel}
           </div>
         )}
 
         {isMenuOpen && (
-          <div id="mobile-menu" className="grid gap-1 border-t border-primary/10 py-3 lg:hidden">
+          <div id="mobile-menu" className="grid gap-1 border-t border-white/10 py-3 lg:hidden">
             {navLinks.map((link) => (
-              <Link key={link.path} to={link.path} className={cn('rounded-xl px-4 py-3 text-sm font-semibold transition', location.pathname === link.path ? 'bg-primary/10 text-primary font-bold' : 'text-text-primary hover:bg-primary/5 hover:text-primary')}>
+              <Link key={link.path} to={link.path} className={cn('rounded-xl px-4 py-3 text-sm font-semibold transition', location.pathname === link.path ? 'bg-white/10 text-primary' : 'text-text-secondary hover:bg-white/[0.06] hover:text-white')}>
                 {link.label}
               </Link>
             ))}

@@ -34,7 +34,7 @@ export function Footer() {
   const displayLogo = logoFooterUrl || logoUrl;
 
   return (
-    <footer className="border-t border-primary/10 bg-dark-lighter">
+    <footer className="border-t border-white/10 bg-dark-lighter">
       <div className="section-container py-12 lg:py-16">
         {/* MOBILE VIEW ONLY: Centered Movie / Film Credits Style */}
         <div className="flex flex-col items-center text-center md:hidden space-y-8">
@@ -49,21 +49,21 @@ export function Footer() {
                   height="88"
                   loading="lazy"
                   decoding="async"
-                  className="h-20 sm:h-24 w-auto max-w-[280px] sm:max-w-[360px] object-contain drop-shadow-sm mx-auto"
+                  className="h-20 sm:h-24 w-auto max-w-[280px] sm:max-w-[360px] object-contain drop-shadow-lg mx-auto"
                 />
               ) : (
                 <div className="flex items-center gap-3">
-                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-gold shadow-sm">
+                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-gold shadow-glass">
                     <Sparkles className="h-6 w-6 text-white" />
                   </div>
                   <div className="text-left">
-                    <span className="block font-heading text-2xl font-bold text-text-primary">{siteName}</span>
-                    <span className="block text-xs uppercase tracking-[0.2em] text-secondary">{tagline}</span>
+                    <span className="block font-heading text-2xl font-bold text-white">{siteName}</span>
+                    <span className="block text-xs uppercase tracking-[0.2em] text-primary">{tagline}</span>
                   </div>
                 </div>
               )}
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-6 text-text-secondary mx-auto">
+            <p className="mt-4 max-w-sm text-sm leading-6 text-text-muted mx-auto">
               Massage dan wellness premium langsung ke hotel, villa, apartemen, atau rumah Anda di Bali. Privat, higienis, dan mudah dipesan.
             </p>
             <a
@@ -77,20 +77,20 @@ export function Footer() {
           </div>
 
           {/* Quicklinks: Movie Credits Style with Pipe Separator */}
-          <div className="w-full space-y-6 pt-4 border-t border-primary/10">
+          <div className="w-full space-y-6 pt-4 border-t border-white/5">
             {/* Layanan */}
             <div className="space-y-2">
               <h2 className="font-body text-xs font-black uppercase tracking-[0.25em] text-primary">
                 LAYANAN
               </h2>
-              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-text-secondary">
+              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-text-muted">
                 {footerLinks.layanan.map((link, idx) => (
                   <span key={link.path} className="inline-flex items-center">
-                    <Link to={link.path} className="transition hover:text-primary font-medium">
+                    <Link to={link.path} className="transition hover:text-white">
                       {link.label}
                     </Link>
                     {idx < footerLinks.layanan.length - 1 && (
-                      <span className="ml-2 text-primary/30 select-none">|</span>
+                      <span className="ml-2 text-white/20 select-none">|</span>
                     )}
                   </span>
                 ))}
@@ -102,14 +102,14 @@ export function Footer() {
               <h2 className="font-body text-xs font-black uppercase tracking-[0.25em] text-primary">
                 INFORMASI
               </h2>
-              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-text-secondary">
+              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-text-muted">
                 {footerLinks.informasi.map((link, idx) => (
                   <span key={link.path} className="inline-flex items-center">
-                    <Link to={link.path} className="transition hover:text-primary font-medium">
+                    <Link to={link.path} className="transition hover:text-white">
                       {link.label}
                     </Link>
                     {idx < footerLinks.informasi.length - 1 && (
-                      <span className="ml-2 text-primary/30 select-none">|</span>
+                      <span className="ml-2 text-white/20 select-none">|</span>
                     )}
                   </span>
                 ))}
@@ -121,14 +121,14 @@ export function Footer() {
               <h2 className="font-body text-xs font-black uppercase tracking-[0.25em] text-primary">
                 BANTUAN
               </h2>
-              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-text-secondary">
+              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-text-muted">
                 {footerLinks.bantuan.map((link, idx) => (
                   <span key={link.path} className="inline-flex items-center">
-                    <Link to={link.path} className="transition hover:text-primary font-medium">
+                    <Link to={link.path} className="transition hover:text-white">
                       {link.label}
                     </Link>
                     {idx < footerLinks.bantuan.length - 1 && (
-                      <span className="ml-2 text-primary/30 select-none">|</span>
+                      <span className="ml-2 text-white/20 select-none">|</span>
                     )}
                   </span>
                 ))}
@@ -149,21 +149,21 @@ export function Footer() {
                   height="88"
                   loading="lazy"
                   decoding="async"
-                  className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto max-w-[320px] sm:max-w-[400px] md:max-w-[480px] object-contain drop-shadow-sm"
+                  className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto max-w-[320px] sm:max-w-[400px] md:max-w-[480px] object-contain drop-shadow-lg"
                 />
               ) : (
                 <div className="flex items-center gap-3">
-                  <div className="grid h-14 w-14 place-items-center rounded-xl bg-gradient-gold shadow-sm">
+                  <div className="grid h-14 w-14 place-items-center rounded-xl bg-gradient-gold shadow-glass">
                     <Sparkles className="h-7 w-7 text-white" />
                   </div>
                   <span>
-                    <span className="block font-heading text-2xl font-bold text-text-primary sm:text-3xl">{siteName}</span>
-                    <span className="block text-xs uppercase tracking-[0.2em] text-secondary">{tagline}</span>
+                    <span className="block font-heading text-2xl font-bold text-white sm:text-3xl">{siteName}</span>
+                    <span className="block text-xs uppercase tracking-[0.2em] text-primary">{tagline}</span>
                   </span>
                 </div>
               )}
             </Link>
-            <p className="mt-5 max-w-md text-sm leading-7 text-text-secondary">
+            <p className="mt-5 max-w-md text-sm leading-7 text-text-muted">
               Massage dan wellness premium langsung ke hotel, villa, apartemen, atau rumah Anda di Bali. Privat, higienis, dan mudah dipesan.
             </p>
             <a
@@ -182,14 +182,14 @@ export function Footer() {
         </div>
 
         {/* Contact info bar */}
-        <div className="mt-12 grid gap-4 rounded-2xl border border-primary/10 bg-white/90 p-5 text-sm text-text-secondary sm:grid-cols-2 lg:grid-cols-4 shadow-sm">
-          <a href={googleMapsUrl} target="_blank" rel="noreferrer" className="flex items-start gap-3 transition hover:text-primary">
+        <div className="mt-12 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-sm text-text-muted sm:grid-cols-2 lg:grid-cols-4">
+          <a href={googleMapsUrl} target="_blank" rel="noreferrer" className="flex items-start gap-3 transition hover:text-white">
             <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {address}
           </a>
-          <a href={`tel:${phone.replace(/\s+/g, '')}`} className="flex items-center gap-3 transition hover:text-primary">
+          <a href={`tel:${phone.replace(/\s+/g, '')}`} className="flex items-center gap-3 transition hover:text-white">
             <Phone className="h-4 w-4 shrink-0 text-primary" /> {phone}
           </a>
-          <a href={`mailto:${email}`} className="flex items-center gap-3 transition hover:text-primary">
+          <a href={`mailto:${email}`} className="flex items-center gap-3 transition hover:text-white">
             <Mail className="h-4 w-4 shrink-0 text-primary" /> {email}
           </a>
           <span className="flex items-center gap-3">
@@ -198,7 +198,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-primary/10">
+      <div className="border-t border-white/10">
         <div className="section-container flex flex-col items-center justify-between gap-3 py-6 text-center text-xs text-text-muted sm:flex-row sm:text-left">
           <p>© {currentYear} {siteName}. All rights reserved.</p>
           <p>
@@ -230,7 +230,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
       <ul className="mt-5 space-y-3">
         {links.map((link) => (
           <li key={link.path}>
-            <Link to={link.path} className="text-sm text-text-secondary transition hover:text-primary font-medium">{link.label}</Link>
+            <Link to={link.path} className="text-sm text-text-muted transition hover:text-white">{link.label}</Link>
           </li>
         ))}
       </ul>

@@ -139,7 +139,7 @@ function HeroFormModal({ slide, onClose, onSave }) {
                 <input type="file" accept="image/*,video/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
               </label>
             </div>
-            <p className="text-[10px] text-gray-600 mt-1.5">Image: 1920×1080px · Video: MP4/WebM landscape</p>
+            <p className="text-[10px] text-gray-600 mt-1.5">Image: 1920×1080px · Video: MP4 (Max 200MB)</p>
           </div>
 
           {/* Headline */}

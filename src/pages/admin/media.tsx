@@ -66,17 +66,21 @@ interface CloudinaryResponse {
 }
 
 const ACCEPTED_IMAGES = 'image/jpeg,image/png,image/webp,image/gif,image/avif';
-const ACCEPTED_VIDEOS = 'video/mp4,video/webm,video/quicktime';
-const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
-const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
+const ACCEPTED_VIDEOS = 'video/mp4,.mp4,video/webm,video/quicktime';
+const MAX_VIDEO_SIZE = 200 * 1024 * 1024; // 200MB
+const MAX_IMAGE_SIZE = 20 * 1024 * 1024; // 20MB
 
-async function uploadToCloudinary(file: File, folder = 'luxury-massage-bali/media'): Promise<CloudinaryUploadResult> {
+async function uploadToCloudinary(
+  file: File,
+  folder = 'luxury-massage-bali/media',
+  onProgress?: (percent: number) => void
+): Promise<CloudinaryUploadResult> {
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
   if (!cloudName || !preset) throw new Error('Cloudinary not configured');
 
-  const isVideo = file.type.startsWith('video/');
+  const isVideo = file.type.startsWith('video/') || file.name.toLowerCase().endsWith('.mp4');
   const resourceType = isVideo ? 'video' : 'image';
 
   const formData = new FormData();
@@ -85,27 +89,44 @@ async function uploadToCloudinary(file: File, folder = 'luxury-massage-bali/medi
   formData.append('folder', folder);
   formData.append('public_id', `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase()}`);
 
+  return new Promise<CloudinaryUploadResult>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`);
 
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
-    { method: 'POST', body: formData }
-  );
+    if (xhr.upload && onProgress) {
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded / event.total) * 100);
+          onProgress(percent);
+        }
+      };
+    }
 
-  const data = (await res.json()) as CloudinaryResponse;
-  if (!res.ok || !data.secure_url || !data.public_id || !data.format || typeof data.bytes !== 'number') {
-    throw new Error(data.error?.message || 'Upload failed');
-  }
+    xhr.onload = () => {
+      try {
+        const data = JSON.parse(xhr.responseText) as CloudinaryResponse;
+        if (xhr.status >= 200 && xhr.status < 300 && data.secure_url && data.public_id && data.format && typeof data.bytes === 'number') {
+          resolve({
+            url: data.secure_url,
+            public_id: data.public_id,
+            format: data.format,
+            bytes: data.bytes,
+            width: data.width,
+            height: data.height,
+            resource_type: resourceType,
+            original_filename: file.name,
+          });
+        } else {
+          reject(new Error(data.error?.message || `Upload failed with status ${xhr.status}`));
+        }
+      } catch (err) {
+        reject(new Error('Invalid response from upload server'));
+      }
+    };
 
-  return {
-    url: data.secure_url,
-    public_id: data.public_id,
-    format: data.format,
-    bytes: data.bytes,
-    width: data.width,
-    height: data.height,
-    resource_type: resourceType,
-    original_filename: file.name,
-  };
+    xhr.onerror = () => reject(new Error('Network error during upload'));
+    xhr.send(formData);
+  });
 }
 
 export default function AdminMedia() {
@@ -162,26 +183,29 @@ export default function AdminMedia() {
   const handleUpload = async (files: FileList | null): Promise<void> => {
     if (!files?.length) return;
     setUploading(true);
+    setUploadProgress(0);
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       try {
-        const isVideo = file.type.startsWith('video/');
+        const isVideo = file.type.startsWith('video/') || file.name.toLowerCase().endsWith('.mp4');
         const sizeLimit = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
 
         if (file.size > sizeLimit) {
-          toast.error(`${file.name} exceeds ${isVideo ? '100MB' : '20MB'} limit`);
+          toast.error(`${file.name} exceeds ${isVideo ? '200MB' : '20MB'} limit`);
           continue;
         }
 
-        setUploadProgress(Math.round(((i) / files.length) * 100));
-        const result = await uploadToCloudinary(file);
+        const result = await uploadToCloudinary(file, 'luxury-massage-bali/media', (filePercent) => {
+          const overall = Math.round(((i + (filePercent / 100)) / files.length) * 100);
+          setUploadProgress(overall);
+        });
 
         await uploadMutation.mutateAsync({
           filename: file.name,
           url: result.url,
           cdn_url: result.url,
-          mime_type: file.type,
+          mime_type: isVideo && !file.type ? 'video/mp4' : file.type,
           size_bytes: result.bytes,
           alt_text: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
           metadata: {
@@ -235,7 +259,7 @@ export default function AdminMedia() {
               Media Library
             </h1>
             <p className="text-gray-400 text-sm mt-1">
-              {mediaItems?.length || 0} items · All images auto-compressed to WebP via Cloudinary
+              {mediaItems?.length || 0} items · Images WebP auto-compressed · Video MP4 max 200MB
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -278,9 +302,10 @@ export default function AdminMedia() {
                 onClick={() => videoInputRef.current?.click()}
                 disabled={uploading}
                 className="flex items-center gap-2 px-4 py-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50"
+                title="Upload MP4 Video (Max 200MB)"
               >
                 <Film className="w-5 h-5" />
-                Upload Video
+                Upload Video (MP4 max 200MB)
               </button>
             </div>
             {/* View Toggle */}

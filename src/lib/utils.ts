@@ -389,12 +389,12 @@ export const APPOINTMENT_HOURS = {
 } as const;
 
 export const MAX_FILE_SIZE = {
-  IMAGE: 5 * 1024 * 1024, // 5MB
-  VIDEO: 50 * 1024 * 1024, // 50MB
+  IMAGE: 20 * 1024 * 1024, // 20MB
+  VIDEO: 200 * 1024 * 1024, // 200MB (MP4)
 } as const;
 
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-export const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm'];
+export const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 
 export const SEO_LIMITS = {
   TITLE: 70,

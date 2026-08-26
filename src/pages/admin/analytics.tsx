@@ -26,7 +26,7 @@ export default function AdminAnalytics() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       const value = { ...settings, google_analytics_id: gaId || settings.google_analytics_id || '', whatsapp_conversion_tracking: true };
-      const { error } = await supabase.from('site_settings').upsert({ key: 'analytics', value });
+      const { error } = await supabase.from('site_settings').upsert({ key: 'analytics', value }, { onConflict: 'key' });
       if (error) throw new Error(error.message);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['settings-analytics'] }),

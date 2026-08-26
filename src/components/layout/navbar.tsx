@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { useBrandingSettings } from '@/lib/branding';
 import { useLanguage } from '@/lib/language';
 import { supabase } from '@/lib/supabase';
-import { BrandLogo } from '@/components/ui/brand-logo';
 import type { Article, Service } from '@/lib/types';
 
 const DEMO_SEARCH_SERVICES: Pick<Service, 'id' | 'name' | 'slug' | 'description' | 'category'>[] = [
@@ -26,7 +25,7 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [query, setQuery] = useState('');
   const location = useLocation();
-  const { siteName, logoUrl } = useBrandingSettings();
+  const { siteName, tagline, logoUrl } = useBrandingSettings();
   const { language, setLanguage, t } = useLanguage();
 
   const navLinks = useMemo(() => [
@@ -137,7 +136,13 @@ export function Navbar() {
             {logoUrl ? (
               <img src={logoUrl} alt={`${siteName} logo`} width="168" height="48" decoding="async" className="h-11 w-auto max-w-[190px] object-contain" />
             ) : (
-              <BrandLogo scrolled={isScrolled} />
+              <>
+                <img src="/favicon.svg" alt="" width="44" height="44" className="h-11 w-11 shrink-0" />
+                <span className="min-w-0">
+                  <span className="block truncate font-heading text-lg font-semibold leading-tight text-white sm:text-xl">{siteName}</span>
+                  <span className="hidden truncate text-[10px] uppercase tracking-[0.18em] text-primary sm:block">{tagline}</span>
+                </span>
+              </>
             )}
           </Link>
 

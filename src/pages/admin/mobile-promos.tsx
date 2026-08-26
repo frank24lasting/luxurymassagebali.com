@@ -33,7 +33,7 @@ export default function AdminMobilePromos() {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from('site_settings').upsert({ key: 'mobile_hero_promos', value: { promos } }, { onConflict: 'key' });
+      const { error } = await supabase.from('site_settings').upsert({ key: 'mobile_hero_promos', value: { promos } });
       if (error) throw error;
     },
     onMutate: () => toast.loading('Saving mobile promos...', { id: 'mobile-promos' }),

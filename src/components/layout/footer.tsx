@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
 import { useBrandingSettings } from '@/lib/branding';
-import { BrandLogo } from '@/components/ui/brand-logo';
 
 const footerLinks = {
   layanan: [
@@ -28,7 +27,7 @@ const footerLinks = {
 } as const;
 
 export function Footer() {
-  const { siteName, logoUrl } = useBrandingSettings();
+  const { siteName, tagline, logoUrl } = useBrandingSettings();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -40,7 +39,13 @@ export function Footer() {
               {logoUrl ? (
                 <img src={logoUrl} alt={`${siteName} logo`} width="180" height="52" loading="lazy" decoding="async" className="h-12 w-auto max-w-[220px] object-contain" />
               ) : (
-                <BrandLogo variant="gold" className="scale-105" />
+                <>
+                  <img src="/favicon.svg" alt="" width="48" height="48" className="h-12 w-12" />
+                  <span>
+                    <span className="block font-heading text-xl font-semibold text-white">{siteName}</span>
+                    <span className="block text-[10px] uppercase tracking-[0.18em] text-primary">{tagline}</span>
+                  </span>
+                </>
               )}
             </Link>
             <p className="mt-5 max-w-md text-sm leading-7 text-text-muted">

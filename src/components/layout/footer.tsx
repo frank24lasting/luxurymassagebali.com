@@ -27,8 +27,9 @@ const footerLinks = {
 } as const;
 
 export function Footer() {
-  const { siteName, tagline, logoUrl } = useBrandingSettings();
+  const { siteName, tagline, logoUrl, logoFooterUrl } = useBrandingSettings();
   const currentYear = new Date().getFullYear();
+  const displayLogo = logoFooterUrl || logoUrl;
 
   return (
     <footer className="border-t border-white/10 bg-dark-lighter">
@@ -36,8 +37,8 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
             <Link to="/" className="inline-flex max-w-full items-center gap-3" aria-label={`${siteName} beranda`}>
-              {logoUrl ? (
-                <img src={logoUrl} alt={`${siteName} logo`} width="180" height="52" loading="lazy" decoding="async" className="h-12 w-auto max-w-[220px] object-contain" />
+              {displayLogo ? (
+                <img src={displayLogo} alt={`${siteName} logo`} width="180" height="52" loading="lazy" decoding="async" className="h-12 w-auto max-w-[220px] object-contain" />
               ) : (
                 <>
                   <img src="/favicon.svg" alt="" width="48" height="48" className="h-12 w-12" />

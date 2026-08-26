@@ -72,7 +72,8 @@ export default function AdminLayout() {
   const [errorPageKey, setErrorPageKey] = useState(0);
   const seenRealtimeIds = useRef(new Set<string>());
   const queryClient = useQueryClient();
-  const { siteName, logoUrl, logoSizeAdmin } = useBrandingSettings();
+  const { siteName, logoUrl, logoAdminUrl, logoSizeAdmin } = useBrandingSettings();
+  const adminLogoSrc = logoAdminUrl || logoUrl;
 
   // Recovery when user returns to the tab
   useEffect(() => {
@@ -126,8 +127,8 @@ export default function AdminLayout() {
         {/* Logo */}
         <div className="h-16 flex items-center px-4 border-b border-white/5">
           <Link to="/langitdewata" className="flex items-center min-w-0" aria-label={siteName}>
-            {logoUrl ? (
-              <img src={logoUrl} alt={`${siteName} admin logo`} style={{ height: `${logoSizeAdmin}px` }} className="w-auto max-w-[220px] object-contain" />
+            {adminLogoSrc ? (
+              <img src={adminLogoSrc} alt={`${siteName} admin logo`} style={{ height: `${logoSizeAdmin}px` }} className="w-auto max-w-[220px] object-contain" />
             ) : (
               <>
                 <div className="w-10 h-10 rounded-xl bg-gradient-gold flex items-center justify-center shadow-gold flex-shrink-0">
@@ -147,18 +148,18 @@ export default function AdminLayout() {
         {/* Navigation */}
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
           {adminNav.map((item) => {
-            const isActive = item.exact 
+            const isActive = item.exact
               ? location.pathname === item.path
               : location.pathname.startsWith(item.path);
-            
+
             return (
               <Link
                 key={item.path}
                 to={item.path}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group",
-                  isActive 
-                    ? "bg-primary/10 text-primary border border-primary/20" 
+                  isActive
+                    ? "bg-primary/10 text-primary border border-primary/20"
                     : "text-gray-400 hover:text-white hover:bg-white/5"
                 )}
               >
@@ -204,7 +205,7 @@ export default function AdminLayout() {
                 <p className="text-white text-sm font-medium truncate">{user?.email || 'Admin'}</p>
                 <p className="text-[10px] text-primary tracking-wide">Administrator</p>
               </div>
-              <button 
+              <button
                 onClick={signOut}
                 className="p-2 text-gray-500 hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10"
                 title="Sign out"
@@ -241,8 +242,8 @@ export default function AdminLayout() {
           >
             <div className="h-16 flex items-center justify-between px-4 border-b border-white/5">
               <div className="flex items-center min-w-0">
-                {logoUrl ? (
-                  <img src={logoUrl} alt={`${siteName} admin logo`} style={{ height: `${logoSizeAdmin}px` }} className="w-auto max-w-[220px] object-contain" />
+                {adminLogoSrc ? (
+                  <img src={adminLogoSrc} alt={`${siteName} admin logo`} style={{ height: `${logoSizeAdmin}px` }} className="w-auto max-w-[220px] object-contain" />
                 ) : (
                   <>
                     <div className="w-10 h-10 rounded-xl bg-gradient-gold flex items-center justify-center">
@@ -262,10 +263,10 @@ export default function AdminLayout() {
 
             <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
               {adminNav.map((item) => {
-                const isActive = item.exact 
+                const isActive = item.exact
                   ? location.pathname === item.path
                   : location.pathname.startsWith(item.path);
-                
+
                 return (
                   <Link
                     key={item.path}
@@ -273,8 +274,8 @@ export default function AdminLayout() {
                     onClick={() => setMobileOpen(false)}
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all",
-                      isActive 
-                        ? "bg-primary/10 text-primary border border-primary/20" 
+                      isActive
+                        ? "bg-primary/10 text-primary border border-primary/20"
                         : "text-gray-400 hover:text-white hover:bg-white/5"
                     )}
                   >
@@ -291,7 +292,7 @@ export default function AdminLayout() {
             </nav>
 
             <div className="p-4 border-t border-white/5">
-              <button 
+              <button
                 onClick={signOut}
                 className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
               >
@@ -332,7 +333,7 @@ export default function AdminLayout() {
         <header className="sticky top-0 z-20 h-[58px] border-b border-white/5 bg-dark/90 backdrop-blur-2xl lg:h-16">
           <div className="flex h-full items-center justify-between gap-3 px-3 lg:px-6">
             {/* Mobile Menu */}
-            <button 
+            <button
               onClick={() => setMobileOpen(true)}
               className="lg:hidden rounded-2xl border border-white/10 bg-white/[0.04] p-2.5 text-gray-300 transition-colors hover:text-white"
             >
@@ -348,7 +349,7 @@ export default function AdminLayout() {
             <div className="hidden md:flex flex-1 max-w-md">
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                <input 
+                <input
                   type="text"
                   placeholder="Search..."
                   className="w-full rounded-2xl border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder-gray-500 transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -400,7 +401,7 @@ export default function AdminLayout() {
               </div>
 
               {/* View Site */}
-              <Link 
+              <Link
                 to="/"
                 target="_blank"
                 className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"

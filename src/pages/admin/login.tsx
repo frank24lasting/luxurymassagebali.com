@@ -3,10 +3,12 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AlertCircle, Eye, EyeOff, Lock, Mail, ShieldCheck, Sparkles } from 'lucide-react';
 import { useAuth } from '@/lib/admin-auth';
+import { useBrandingSettings } from '@/lib/branding';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
   const { isAuthenticated, isAdmin, isLoading, signIn } = useAuth();
+  const { siteName, logoLoginUrl } = useBrandingSettings();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -54,12 +56,18 @@ export default function AdminLogin() {
       >
         <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-dark-lighter shadow-2xl">
           <div className="border-b border-white/5 p-8 text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-brand shadow-clean">
-              <ShieldCheck className="h-8 w-8 text-white" />
-            </div>
+            {logoLoginUrl ? (
+              <div className="mx-auto mb-5 flex h-20 items-center justify-center max-w-[240px]">
+                <img src={logoLoginUrl} alt={`${siteName} login logo`} className="h-full w-auto max-w-full object-contain" />
+              </div>
+            ) : (
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-brand shadow-clean">
+                <ShieldCheck className="h-8 w-8 text-white" />
+              </div>
+            )}
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              Luxury Massage Bali Admin
+              {siteName} Admin
             </div>
             <h1 className="text-2xl font-heading font-bold">Backend Login</h1>
             <p className="text-sm text-gray-400 mt-2">Masuk dengan akun Supabase Auth admin.</p>

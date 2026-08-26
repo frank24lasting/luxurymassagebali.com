@@ -25,8 +25,10 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [query, setQuery] = useState('');
   const location = useLocation();
-  const { siteName, tagline, logoUrl } = useBrandingSettings();
+  const { siteName, tagline, logoUrl, logoStickyUrl } = useBrandingSettings();
   const { language, setLanguage, t } = useLanguage();
+
+  const currentLogo = isScrolled ? (logoStickyUrl || logoUrl) : logoUrl;
 
   const navLinks = useMemo(() => [
     { label: t('home'), path: '/' },
@@ -133,8 +135,8 @@ export function Navbar() {
       <nav className="section-container" aria-label="Navigasi utama">
         <div className="flex h-20 items-center justify-between gap-4">
           <Link to="/" className="flex min-w-0 items-center gap-3" aria-label={`${siteName} beranda`}>
-            {logoUrl ? (
-              <img src={logoUrl} alt={`${siteName} logo`} width="168" height="48" decoding="async" className="h-11 w-auto max-w-[190px] object-contain" />
+            {currentLogo ? (
+              <img src={currentLogo} alt={`${siteName} logo`} width="168" height="48" decoding="async" className="h-11 w-auto max-w-[190px] object-contain transition-all duration-300" />
             ) : (
               <>
                 <img src="/favicon.svg" alt="" width="44" height="44" className="h-11 w-11 shrink-0" />

@@ -5,6 +5,10 @@ export interface BrandingSettings {
   readonly site_name?: string;
   readonly logo_text?: string;
   readonly logo_url?: string;
+  readonly logo_sticky_url?: string;
+  readonly logo_footer_url?: string;
+  readonly logo_admin_url?: string;
+  readonly logo_login_url?: string;
   readonly logo_mode?: 'image' | 'text';
   readonly favicon_url?: string;
   readonly tagline?: string;
@@ -36,6 +40,11 @@ function normalizeBrand(value: string | undefined, fallback: string): string {
   return value;
 }
 
+function cleanLogoUrl(url: string | undefined): string {
+  if (!url || url.includes('spa-jimbaran')) return '';
+  return url;
+}
+
 async function fetchBranding(): Promise<BrandingSettings> {
   const { data, error } = await supabase
     .from('site_settings')
@@ -50,8 +59,12 @@ async function fetchBranding(): Promise<BrandingSettings> {
     site_name: normalizeBrand(settings.site_name, 'Luxury Massage Bali'),
     logo_text: normalizeBrand(settings.logo_text, 'Luxury Massage Bali'),
     tagline: normalizeBrand(settings.tagline, 'Premium Massage, Delivered in Bali'),
-    logo_url: settings.logo_url?.includes('spa-jimbaran') ? '' : settings.logo_url,
-    favicon_url: settings.favicon_url?.includes('spa-jimbaran') ? '/favicon.svg' : settings.favicon_url,
+    logo_url: cleanLogoUrl(settings.logo_url),
+    logo_sticky_url: cleanLogoUrl(settings.logo_sticky_url),
+    logo_footer_url: cleanLogoUrl(settings.logo_footer_url),
+    logo_admin_url: cleanLogoUrl(settings.logo_admin_url),
+    logo_login_url: cleanLogoUrl(settings.logo_login_url),
+    favicon_url: settings.favicon_url?.includes('spa-jimbaran') ? '/favicon.svg' : (settings.favicon_url || '/favicon.svg'),
   };
 }
 
@@ -62,10 +75,20 @@ export function useBrandingSettings() {
     staleTime: 5 * 60 * 1000,
   });
 
+  const mainLogo = branding.logo_url || '';
+  const stickyLogo = branding.logo_sticky_url || mainLogo;
+  const footerLogo = branding.logo_footer_url || mainLogo;
+  const adminLogo = branding.logo_admin_url || mainLogo;
+  const loginLogo = branding.logo_login_url || adminLogo || mainLogo;
+
   return {
     siteName: branding.site_name || branding.logo_text || 'Luxury Massage Bali',
     tagline: branding.tagline || 'Premium Massage, Delivered in Bali',
-    logoUrl: branding.logo_url || '',
+    logoUrl: mainLogo,
+    logoStickyUrl: stickyLogo,
+    logoFooterUrl: footerLogo,
+    logoAdminUrl: adminLogo,
+    logoLoginUrl: loginLogo,
     logoSizeNav: toSize(branding.logo_size_nav, 140),
     logoSizeMobile: toSize(branding.logo_size_mobile, 120),
     logoSizeAdmin: toSize(branding.logo_size_admin, 100),
@@ -76,5 +99,7 @@ export function useBrandingSettings() {
     logoScaleAdmin: toScale(branding.logo_scale_admin, 1.4),
     logoScaleFooter: toScale(branding.logo_scale_footer, 1.4),
     faviconUrl: branding.favicon_url || '/favicon.svg',
+    rawSettings: branding,
   };
 }
+

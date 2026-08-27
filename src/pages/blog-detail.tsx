@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { getSiteUrl } from '@/lib/seo';
 import { useContactSettings } from '@/lib/contact';
 import type { Article, Service } from '@/lib/types';
+import DynamicPage from '@/pages/dynamic-page';
 
 interface RichNode {
   readonly type?: string;
@@ -142,7 +143,7 @@ function BacaJuga({ articles }: { readonly articles: readonly RelatedArticle[] }
       <h3 className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-primary"><BookOpen className="h-4 w-4" /> Baca Juga</h3>
       <div className="mt-3 space-y-2">
         {articles.slice(0, 2).map((a) => (
-          <Link key={a.id} to={`/blog/${a.slug}`} className="group flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-white/5">
+          <Link key={a.id} to={`/${a.slug}`} className="group flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-white/5">
             <ExternalLink className="mt-1 h-4 w-4 shrink-0 text-primary opacity-50 group-hover:opacity-100" />
             <div>
               <p className="text-sm font-bold text-white group-hover:text-primary">{a.title}</p>
@@ -190,7 +191,6 @@ function RichArticleContent({ content, relatedArticles, services }: { readonly c
   const nodes = doc.content ?? [];
   if (!nodes.length) return <p className="text-gray-400">Konten belum tersedia.</p>;
 
-
   return (
     <>
       {nodes.map((node, index) => {
@@ -217,30 +217,33 @@ export default function BlogDetail() {
   const { data: services = [] } = useQuery({ queryKey: ['related-services'], queryFn: () => fetchRelatedServices() });
   const text = useMemo(() => extractText(article?.content), [article?.content]);
   const headings = useMemo(() => collectHeadings(article?.content).slice(0, 10), [article?.content]);
-  const shareUrl = article ? `${getSiteUrl()}/blog/${article.slug}` : '';
+  const shareUrl = article ? `${getSiteUrl()}/${article.slug}` : '';
   const publishedDate = article?.published_at ?? article?.created_at ?? new Date().toISOString();
 
   useEffect(() => {
+    if (!article) return;
+
     const handleCopy = (e: ClipboardEvent) => {
       const selection = window.getSelection();
       if (!selection || selection.isCollapsed) return;
       const copiedText = selection.toString();
-      const sourceLink = article ? `${getSiteUrl()}/blog/${article.slug}` : '';
-      const articleTitle = article?.title ?? 'Artikel Luxury Massage Bali';
-      const credit = `\n\n---\nSumber: ${articleTitle}\nBaca selengkapnya: ${sourceLink}\nDibuat oleh TUKANGBUATWEBSITEBALI (https://wa.me/628990090802)`;
+      const sourceLink = `${getSiteUrl()}/${article.slug}`;
+      const credit = `\n\n---\nSumber: ${article.title}\nBaca selengkapnya: ${sourceLink}\nDibuat oleh TUKANGBUATWEBSITEBALI (https://wa.me/628990090802)`;
       e.clipboardData?.setData('text/plain', copiedText + credit);
       e.preventDefault();
     };
     document.addEventListener('copy', handleCopy);
     return () => document.removeEventListener('copy', handleCopy);
-  }, [article?.title, article?.slug]);
+  }, [article]);
 
   if (isLoading) return <main className="min-h-screen bg-dark pt-28 text-white"><div className="section-container"><div className="h-96 animate-pulse rounded-3xl bg-white/5" /></div></main>;
-  if (!article) return <main className="min-h-screen bg-dark pt-28 text-white"><div className="section-container text-center text-gray-400">Artikel tidak ditemukan.</div></main>;
+
+  // If no article found with this slug, fallback to DynamicPage
+  if (!article) return <DynamicPage />;
 
   return (
     <>
-      <SEOHead pageSEO={{ path: `/blog/${article.slug}`, title: article.seo_title || article.title, description: article.seo_description || article.excerpt, ogImage: article.og_image || article.cover_image }} schemaType="article" articleData={{ title: article.title, slug: article.slug, excerpt: article.excerpt, coverImage: article.cover_image, author: article.author, publishedAt: publishedDate, updatedAt: article.updated_at }} />
+      <SEOHead pageSEO={{ path: `/${article.slug}`, title: article.seo_title || article.title, description: article.seo_description || article.excerpt, ogImage: article.og_image || article.cover_image }} schemaType="article" articleData={{ title: article.title, slug: article.slug, excerpt: article.excerpt, coverImage: article.cover_image, author: article.author, publishedAt: publishedDate, updatedAt: article.updated_at }} />
       <main className="min-h-screen bg-dark pb-24 pt-24 text-white md:pt-28">
         <section className="section-container">
           <Link to="/blog" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-primary md:text-sm"><ArrowLeft className="h-4 w-4" /> Blog</Link>
@@ -281,7 +284,7 @@ export default function BlogDetail() {
               </div>
               <div className="rounded-[1.6rem] border border-white/10 bg-dark-card p-5">
                 <h2 className="font-black text-white">Related Articles</h2>
-                <div className="mt-4 space-y-4">{related.length ? related.map((item) => <Link key={item.id} to={`/blog/${item.slug}`} className="block overflow-hidden rounded-2xl bg-white/5 transition-colors hover:bg-white/10">{item.cover_image && <img src={item.cover_image} alt={item.title} className="aspect-video w-full object-cover" />}<div className="p-3"><p className="line-clamp-2 text-sm font-bold text-white">{item.title}</p><p className="mt-1 line-clamp-2 text-xs text-gray-500">{item.excerpt}</p></div></Link>) : <p className="text-sm text-gray-500">Belum ada artikel terkait.</p>}</div>
+                <div className="mt-4 space-y-4">{related.length ? related.map((item) => <Link key={item.id} to={`/${item.slug}`} className="block overflow-hidden rounded-2xl bg-white/5 transition-colors hover:bg-white/10">{item.cover_image && <img src={item.cover_image} alt={item.title} className="aspect-video w-full object-cover" />}<div className="p-3"><p className="line-clamp-2 text-sm font-bold text-white">{item.title}</p><p className="mt-1 line-clamp-2 text-xs text-gray-500">{item.excerpt}</p></div></Link>) : <p className="text-sm text-gray-500">Belum ada artikel terkait.</p>}</div>
               </div>
             </aside>
           </div>

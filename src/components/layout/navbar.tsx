@@ -102,7 +102,7 @@ export function Navbar() {
     const articles = searchArticles
       .filter((item) => `${item.title} ${item.excerpt} ${item.category}`.toLowerCase().includes(term))
       .slice(0, 4)
-      .map((item) => ({ type: t('articleLabel'), title: item.title, desc: item.category, path: `/blog/${item.slug}`, icon: FileText }));
+      .map((item) => ({ type: t('articleLabel'), title: item.title, desc: item.category, path: `/${item.slug}`, icon: FileText }));
     return [...services, ...articles].slice(0, 6);
   }, [query, searchServices, searchArticles, t]);
 

@@ -315,7 +315,7 @@ function ArticleForm({ article, onClose, onSave }) {
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1.5">Canonical URL</label>
-                  <input type="text" value={form.schema_markup?.canonical_url || ''} onChange={e => setForm(f => ({ ...f, schema_markup: { ...f.schema_markup, canonical_url: e.target.value } }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white" placeholder="https://luxurymassagebali.com/blog/slug" />
+                  <input type="text" value={form.schema_markup?.canonical_url || ''} onChange={e => setForm(f => ({ ...f, schema_markup: { ...f.schema_markup, canonical_url: e.target.value } }))} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white" placeholder="https://luxurymassagebali.com/slug" />
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1.5">AI Search Summary</label>

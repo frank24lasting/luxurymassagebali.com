@@ -735,7 +735,7 @@ export default function Home() {
             {articles.slice(0, 3).map((article) => (
               <Link
                 key={article.id}
-                to={`/blog/${article.slug}`}
+                to={`/${article.slug}`}
                 className="group flex flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.02] transition duration-300 hover:border-primary/40 hover:bg-white/[0.05]"
               >
                 <div className="h-44 overflow-hidden bg-primary/10">

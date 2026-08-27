@@ -134,14 +134,14 @@ export function buildArticleSchema(article: {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
-    url: `${BASE_URL}/blog/${article.slug}`,
+    url: `${BASE_URL}/${article.slug}`,
     datePublished: article.publishedAt,
     dateModified: article.updatedAt,
     author: { '@type': 'Person', name: article.author, url: BASE_URL },
     publisher: { '@id': organizationId },
     image: { '@type': 'ImageObject', url: absoluteUrl(article.coverImage), width: 1200, height: 630 },
     description: article.excerpt,
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `${BASE_URL}/blog/${article.slug}` },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${BASE_URL}/${article.slug}` },
   };
 }
 

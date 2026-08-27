@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, Navigate, useParams } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
@@ -29,6 +29,11 @@ function FaviconSync() {
   return null;
 }
 
+function LegacyBlogRedirect() {
+  const { slug = '' } = useParams();
+  return <Navigate to={`/${slug}`} replace />;
+}
+
 // ============================================
 // LAZY LOADING — All routes lazy loaded
 // ============================================
@@ -45,7 +50,6 @@ const BlogDetail = lazy(() => import('@/pages/blog-detail'));
 const About = lazy(() => import('@/pages/about'));
 const Contact = lazy(() => import('@/pages/contact'));
 const Gallery = lazy(() => import('@/pages/gallery'));
-const DynamicPage = lazy(() => import('@/pages/dynamic-page'));
 
 // Admin Pages
 const AdminLogin = lazy(() => import('@/pages/admin/login'));
@@ -288,11 +292,7 @@ export default function App() {
                   />
                   <Route
                     path="/blog/:slug"
-                    element={
-                      <Suspense fallback={<PageLoader />}>
-                        <BlogDetail />
-                      </Suspense>
-                    }
+                    element={<LegacyBlogRedirect />}
                   />
                   <Route
                     path="/about"
@@ -340,7 +340,7 @@ export default function App() {
                     path="/:slug"
                     element={
                       <Suspense fallback={<PageLoader />}>
-                        <DynamicPage />
+                        <BlogDetail />
                       </Suspense>
                     }
                   />

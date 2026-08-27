@@ -75,7 +75,8 @@ function renderInline(node: RichNode, key: string): ReactNode {
     node.marks?.forEach((mark) => {
       if (mark.type === 'bold') element = <strong key={`${key}-bold`} className="font-black text-white">{element}</strong>;
       if (mark.type === 'italic') element = <em key={`${key}-italic`} className="text-primary/90">{element}</em>;
-      if (mark.type === 'link') element = <a key={`${key}-link`} href={String(mark.attrs?.href ?? '#')} target="_blank" rel="noreferrer" className="font-bold text-primary underline decoration-primary/40 underline-offset-4">{element}</a>;
+      if (mark.type === 'strike') element = <s key={`${key}-strike`} className="line-through text-gray-400">{element}</s>;
+      if (mark.type === 'link') element = <a key={`${key}-link`} href={String(mark.attrs?.href ?? '#')} target="_blank" rel="noopener noreferrer" className="font-bold text-primary underline decoration-primary/40 underline-offset-4 hover:text-white transition-colors">{element}</a>;
     });
     return element;
   }
@@ -84,13 +85,48 @@ function renderInline(node: RichNode, key: string): ReactNode {
 
 function renderNode(node: RichNode, index: number): ReactNode {
   const children = node.content?.map((child, childIndex) => renderInline(child, `${index}-${childIndex}`));
+
   if (node.type === 'heading') {
     const level = Number(node.attrs?.level ?? 2);
     const text = extractText(node);
-    if (level === 1) return <h2 key={index} id={text.toLowerCase().replace(/[^a-z0-9]+/g, '-')} className="mt-10 font-heading text-3xl font-black tracking-[-0.03em] text-white md:text-4xl">{children}</h2>;
-    if (level === 3) return <h3 key={index} id={text.toLowerCase().replace(/[^a-z0-9]+/g, '-')} className="mt-8 text-2xl font-black text-white">{children}</h3>;
-    return <h2 key={index} id={text.toLowerCase().replace(/[^a-z0-9]+/g, '-')} className="mt-10 font-heading text-3xl font-black tracking-[-0.03em] text-white md:text-4xl">{children}</h2>;
+    const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    if (level === 1) return <h2 key={index} id={id} className="mt-10 font-heading text-3xl font-black tracking-[-0.03em] text-white md:text-4xl">{children}</h2>;
+    if (level === 2) return <h2 key={index} id={id} className="mt-10 font-heading text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">{children}</h2>;
+    if (level === 3) return <h3 key={index} id={id} className="mt-8 font-heading text-xl font-bold text-white md:text-2xl">{children}</h3>;
+    if (level === 4) return <h4 key={index} id={id} className="mt-6 font-heading text-lg font-bold text-white">{children}</h4>;
+    if (level === 5) return <h5 key={index} id={id} className="mt-5 font-heading text-base font-semibold text-white">{children}</h5>;
+    if (level === 6) return <h6 key={index} id={id} className="mt-4 font-heading text-sm font-semibold uppercase tracking-wider text-primary">{children}</h6>;
+    return <h2 key={index} id={id} className="mt-10 font-heading text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">{children}</h2>;
   }
+
+  if (node.type === 'image') {
+    const src = String(node.attrs?.src ?? '');
+    const alt = String(node.attrs?.alt ?? 'Gambar artikel');
+    const title = node.attrs?.title ? String(node.attrs.title) : '';
+    if (!src) return null;
+
+    return (
+      <figure key={index} className="my-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] shadow-lg">
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-auto object-cover max-h-[550px] rounded-xl"
+          loading="lazy"
+        />
+        {Boolean(title) && (
+          <figcaption className="p-3 text-center text-xs text-gray-400">
+            {title}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+
+  if (node.type === 'horizontalRule') {
+    return <hr key={index} className="my-8 border-white/10" />;
+  }
+
   if (node.type === 'bulletList') return <ul key={index} className="my-6 space-y-3 pl-0">{node.content?.map((child, i) => renderNode(child, i))}</ul>;
   if (node.type === 'orderedList') return <ol key={index} className="my-6 list-decimal space-y-3 pl-6 marker:text-primary">{node.content?.map((child, i) => renderNode(child, i))}</ol>;
   if (node.type === 'listItem') return <li key={index} className="flex gap-3 text-gray-300"><CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-primary" /><span>{node.content?.map((child, i) => renderInline(child, `${index}-li-${i}`))}</span></li>;

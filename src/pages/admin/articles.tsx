@@ -21,7 +21,13 @@ import toast from 'react-hot-toast';
 
 // Article Form
 function ArticleForm({ article, onClose, onSave }) {
-  const [form, setForm] = useState(() => {
+  const sanitizeContent = (content: any) => {
+    if (!content) return '';
+    if (typeof content === 'object' && !content.type && !Array.isArray(content)) return '';
+    return content;
+  };
+
+  const getInitialFormState = (articleData: any) => {
     const defaultForm = {
       title: '',
       slug: '',
@@ -46,15 +52,16 @@ function ArticleForm({ article, onClose, onSave }) {
       },
     };
 
-    // Sanitize TipTap content: empty object {} crashes the editor
-    const sanitizeContent = (content: any) => {
-      if (!content) return '';
-      if (typeof content === 'object' && !content.type) return '';
-      return content;
-    };
-
-    if (article) {
-      return { ...defaultForm, ...article, content: sanitizeContent(article.content) };
+    if (articleData) {
+      return {
+        ...defaultForm,
+        ...articleData,
+        content: sanitizeContent(articleData.content),
+        schema_markup: {
+          ...defaultForm.schema_markup,
+          ...(articleData.schema_markup || {}),
+        },
+      };
     }
 
     const saved = localStorage.getItem('article-draft-new');
@@ -62,17 +69,28 @@ function ArticleForm({ article, onClose, onSave }) {
       try {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
-          parsed.content = sanitizeContent(parsed.content);
-          return { ...defaultForm, ...parsed };
+          return {
+            ...defaultForm,
+            ...parsed,
+            content: sanitizeContent(parsed.content),
+          };
         }
       } catch { }
     }
 
     return defaultForm;
-  });
+  };
 
+  const [form, setForm] = useState(() => getInitialFormState(article));
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+
+  // Sync state when editing a different article
+  useEffect(() => {
+    if (article) {
+      setForm(getInitialFormState(article));
+    }
+  }, [article]);
 
   // Auto-save draft for new articles
   useEffect(() => {
@@ -346,7 +364,7 @@ export default function AdminArticles() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('articles')
-        .select('id, title, slug, excerpt, cover_image, category, status, published_at, created_at')
+        .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data;
@@ -509,8 +527,8 @@ export default function AdminArticles() {
                 key={f}
                 onClick={() => setFilter(f)}
                 className={`px-4 py-2.5 text-sm font-medium rounded-xl capitalize transition-colors ${filter === f
-                    ? 'bg-primary text-dark'
-                    : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+                  ? 'bg-primary text-dark'
+                  : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
                   }`}
               >
                 {f}

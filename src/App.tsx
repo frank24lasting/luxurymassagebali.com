@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route, Outlet, Navigate, useParams } from 'react
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { GoogleTracking } from '@/components/analytics/google-tracking';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { BottomNav } from '@/components/layout/bottom-nav';
@@ -92,102 +92,33 @@ const queryClient = new QueryClient({
 // ============================================
 
 function PageLoader() {
-  const { siteName, logoUrl, logoStickyUrl, logoFooterUrl } = useBrandingSettings();
+  const { siteName, logoUrl, logoStickyUrl, logoFooterUrl, logoSizeLoader } = useBrandingSettings();
+  const shouldReduceMotion = useReducedMotion();
   const displayLogo = logoUrl || logoStickyUrl || logoFooterUrl;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#10251f] px-6">
-      {/* Soft ambient background glow */}
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-dark px-6" role="status" aria-label={`Memuat ${siteName}`}>
       <motion.div
-        animate={{
-          scale: [1, 1.25, 1],
-          opacity: [0.2, 0.45, 0.2],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-        className="pointer-events-none absolute h-72 w-72 rounded-full bg-gradient-to-tr from-[#19322c] via-[#245246] to-[#a8c8ba]/20 blur-3xl"
-      />
-
-      <div className="relative flex flex-col items-center gap-6 text-center" role="status" aria-label={`Memuat ${siteName}`}>
-        {/* Animated Brand Logo Container */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.88 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="relative flex items-center justify-center"
-        >
-          {displayLogo ? (
-            <motion.div
-              animate={{
-                y: [0, -6, 0],
-                filter: [
-                  'drop-shadow(0 10px 20px rgba(168, 200, 186, 0.15))',
-                  'drop-shadow(0 16px 30px rgba(168, 200, 186, 0.35))',
-                  'drop-shadow(0 10px 20px rgba(168, 200, 186, 0.15))',
-                ],
-              }}
-              transition={{
-                duration: 2.6,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              className="p-3"
-            >
-              <img
-                src={displayLogo}
-                alt={`${siteName} logo`}
-                width="280"
-                height="80"
-                className="h-20 sm:h-24 md:h-28 w-auto max-w-[260px] sm:max-w-[320px] object-contain"
-              />
-            </motion.div>
-          ) : (
-            <motion.div
-              animate={{
-                scale: [1, 1.06, 1],
-                rotate: [0, 4, -4, 0],
-              }}
-              transition={{
-                duration: 3.2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              className="grid h-20 w-20 place-items-center rounded-2xl border border-white/20 bg-gradient-gold shadow-glass-lg"
-            >
-              <Sparkles className="h-9 w-9 text-primary animate-pulse" />
-            </motion.div>
-          )}
-        </motion.div>
-
-        {/* Text & Tagline */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-        >
-          <p className="font-heading text-2xl font-bold tracking-wide text-white sm:text-3xl">{siteName}</p>
-          <p className="mt-1 text-xs uppercase tracking-[0.25em] text-[#a8c8ba]">Luxury Wellness Experience</p>
-        </motion.div>
-
-        {/* Shimmering Smooth Progress Indicator */}
-        <div className="relative h-1 w-36 overflow-hidden rounded-full bg-white/10">
-          <motion.div
-            animate={{
-              x: ['-100%', '100%'],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-            className="h-full w-20 rounded-full bg-gradient-to-r from-transparent via-[#dcebe4] to-transparent shadow-[0_0_12px_#dcebe4]"
+        initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.94 }}
+        animate={shouldReduceMotion ? { opacity: 1 } : { opacity: [0.72, 1, 0.72], scale: [0.96, 1.03, 0.96] }}
+        transition={shouldReduceMotion ? { duration: 0.2 } : { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+        className="flex max-w-xs items-center justify-center"
+      >
+        {displayLogo ? (
+          <img
+            src={displayLogo}
+            alt={siteName}
+            width={logoSizeLoader}
+            height={logoSizeLoader}
+            className="h-auto max-h-28 w-auto max-w-full object-contain"
           />
-        </div>
-        <span className="sr-only">Memuat halaman...</span>
-      </div>
+        ) : (
+          <span className="text-center font-heading text-3xl font-bold tracking-wide text-white sm:text-4xl">
+            Luxury Massage Bali
+          </span>
+        )}
+      </motion.div>
+      <span className="sr-only">Memuat halaman...</span>
     </div>
   );
 }
@@ -239,6 +170,7 @@ export default function App() {
           <LanguageProvider>
             <FaviconSync />
             <BrowserRouter>
+              <GoogleTracking />
               <Routes>
                 {/* Public Routes */}
                 <Route element={<PublicLayout />}>

@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Building2, CalendarClock, Globe, Image as ImageIcon, MapPin, Menu, MessageCircle, MessageSquare, Palette, Save, Search, Settings, Shield, Sparkles, Trash2, CheckCircle2, PhoneCall, Mail, Clock } from 'lucide-react';
+import { Building2, CalendarClock, Globe, MapPin, Menu, MessageCircle, MessageSquare, Palette, Save, Search, Settings, Shield, Sparkles, Trash2, CheckCircle2, PhoneCall, Mail, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
 import { MediaPickerButton } from '@/components/ui/media-picker';
 import { extractMapEmbedSrc, DEFAULT_MAP_EMBED_SRC } from '@/lib/contact';
 
 type SettingValue = Record<string, unknown>;
-type SettingKey = 'contact_info' | 'seo_global' | 'branding' | 'navigation' | 'footer' | 'booking_rules' | 'theme' | 'social_links' | 'analytics' | 'maintenance';
+type SettingKey = 'contact_info' | 'seo_global' | 'branding' | 'navigation' | 'footer' | 'booking_rules' | 'theme' | 'social_links' | 'maintenance';
 
 const defaults: Record<SettingKey, SettingValue> = {
   contact_info: { phone: '+6281353681757', whatsapp: '+6281353681757', email: 'hello@luxurymassagebali.com', address: 'Bali, Indonesia', google_maps_url: 'https://maps.app.goo.gl/SbephNzX2QaKfiEB9?g_st=iwb', google_maps_embed: DEFAULT_MAP_EMBED_SRC, open_hour: '09:00', close_hour: '21:00', timezone: 'Asia/Makassar' },
@@ -40,7 +40,6 @@ const defaults: Record<SettingKey, SettingValue> = {
   booking_rules: { whatsapp_template: 'Halo Luxury Massage Bali, saya ingin booking.', min_notice_hours: '2', max_days_ahead: '30', deposit_required: 'false', cancellation_policy: 'Pembatalan mendadak dapat dikenakan biaya operasional.' },
   theme: { primary_color: '#214038', dark_color: '#0c1a16', accent_color: '#19322c', mode: 'dark', radius: '20' },
   social_links: { instagram: '', facebook: '', tiktok: '', youtube: '', tripadvisor: '', google_business: '' },
-  analytics: { google_analytics_id: 'G-XXXXXXXXXX', meta_pixel_id: '', tiktok_pixel_id: '', whatsapp_conversion_tracking: 'true' },
   maintenance: { enabled: 'false', message: 'Website sedang maintenance sebentar.', allow_admin_bypass: 'true' },
 };
 
@@ -178,7 +177,6 @@ export default function AdminSettings() {
     { id: 'booking_rules', label: 'Booking Rules', icon: CalendarClock },
     { id: 'theme', label: 'Theme', icon: Palette },
     { id: 'social_links', label: 'Social Links', icon: MessageCircle },
-    { id: 'analytics', label: 'Pixels', icon: ImageIcon },
     { id: 'maintenance', label: 'Maintenance', icon: Shield },
   ] as const, []);
 

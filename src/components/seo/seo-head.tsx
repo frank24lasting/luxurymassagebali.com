@@ -80,32 +80,28 @@ export function SEOHead({
       <meta name="robots" content={meta.robots} />
       <link rel="canonical" href={meta.canonical} />
 
-      {/* Google Analytics */}
-      {globalSEO?.googleAnalyticsId && (
-        <>
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${globalSEO.googleAnalyticsId}`} />
-          <script>{`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${globalSEO.googleAnalyticsId}');
-          `}</script>
-        </>
-      )}
+      <meta name="googlebot" content={meta.robots} />
+      <meta name="bingbot" content={meta.robots} />
 
       {/* Open Graph */}
       <meta property="og:title" content={meta.og.title} />
       <meta property="og:description" content={meta.og.description} />
       <meta property="og:image" content={meta.og.image} />
+      <meta property="og:image:secure_url" content={meta.og.image} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={meta.og.title} />
       <meta property="og:url" content={meta.og.url} />
       <meta property="og:type" content={meta.og.type} />
       <meta property="og:site_name" content={meta.og.siteName} />
+      <meta property="og:locale" content="id_ID" />
 
       {/* Twitter */}
       <meta name="twitter:card" content={meta.twitter.card} />
       <meta name="twitter:title" content={meta.twitter.title} />
       <meta name="twitter:description" content={meta.twitter.description} />
       <meta name="twitter:image" content={meta.twitter.image} />
+      <meta name="twitter:image:alt" content={meta.twitter.title} />
       {meta.twitter.site && <meta name="twitter:site" content={meta.twitter.site} />}
 
       {/* Mobile Specific */}

@@ -9,6 +9,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "seo:sitemap": "node scripts/generate-sitemap.mjs",
+    "prebuild": "npm run seo:sitemap",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",

@@ -278,7 +278,7 @@ export function buildMetaTags(pageSEO?: PageSEO, globalSEO?: Partial<SEOSettings
     description,
     keywords: 'luxury massage bali, home massage bali, balinese massage, out call massage bali, facial bali, body treatment bali, couple massage bali',
     author: BUSINESS.name,
-    robots: 'index, follow',
+    robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
     canonical: url,
     og: { title, description, image, url, type: 'website', siteName: globalSEO?.ogSiteName || BUSINESS.name },
     twitter: { card: globalSEO?.twitterCard || 'summary_large_image', title, description, image, site: globalSEO?.twitterHandle || undefined },

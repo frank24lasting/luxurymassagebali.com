@@ -1,43 +1,168 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { BarChart3, Calendar, FileText, MousePointerClick, RefreshCw, Star, TrendingUp } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { BadgeCheck, BarChart3, Code2, RefreshCw, Search, Target } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
+import {
+  EMPTY_TRACKING_SETTINGS,
+  isValidGa4Id,
+  isValidGoogleAdsId,
+  isValidGtmId,
+  normalizeTrackingSettings,
+  type GoogleTrackingSettings,
+} from '@/lib/analytics';
 
-async function countTable(table: string): Promise<number> {
-  const { count, error } = await supabase.from(table).select('*', { count: 'exact', head: true });
+async function fetchTrackingSettings(): Promise<GoogleTrackingSettings> {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'analytics')
+    .maybeSingle();
   if (error) throw new Error(error.message);
-  return count ?? 0;
+  const value = data?.value;
+  return normalizeTrackingSettings(
+    value && typeof value === 'object' && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : {},
+  );
 }
 
-async function fetchSetting(key: string): Promise<Record<string, unknown>> {
-  const { data, error } = await supabase.from('site_settings').select('value').eq('key', key).maybeSingle();
-  if (error) throw new Error(error.message);
-  return (data?.value as Record<string, unknown>) ?? {};
-}
+const fields = [
+  { key: 'gtm_id', label: 'Google Tag Manager', placeholder: 'GTM-XXXXXXX', hint: 'Container ID dari Google Tag Manager.' },
+  { key: 'google_ads_id', label: 'Google Ads', placeholder: 'AW-123456789', hint: 'Google tag ID dari akun Google Ads.' },
+  { key: 'ga4_id', label: 'Google Analytics 4', placeholder: 'G-XXXXXXXXXX', hint: 'Measurement ID dari GA4 Web Data Stream.' },
+  { key: 'search_console_verification', label: 'Google Search Console', placeholder: 'Kode verifikasi HTML tag', hint: 'Isi hanya nilai content dari meta google-site-verification.' },
+] as const;
+
+const conversionEvents = [
+  'click_whatsapp',
+  'booking_start',
+  'booking_submit',
+  'booking_complete',
+  'click_phone',
+  'generate_lead',
+  'view_price',
+  'click_google_maps',
+  'click_email',
+  'view_service',
+  'page_view',
+] as const;
 
 export default function AdminAnalytics() {
   const queryClient = useQueryClient();
-  const [gaId, setGaId] = useState('');
-  const { data: services = 0 } = useQuery({ queryKey: ['analytics-services'], queryFn: () => countTable('services') });
-  const { data: articles = 0 } = useQuery({ queryKey: ['analytics-articles'], queryFn: () => countTable('articles') });
-  const { data: bookings = 0 } = useQuery({ queryKey: ['analytics-bookings'], queryFn: () => countTable('appointments') });
-  const { data: settings = {} } = useQuery({ queryKey: ['settings-analytics'], queryFn: () => fetchSetting('analytics') });
+  const [overrides, setOverrides] = useState<Partial<GoogleTrackingSettings>>({});
+  const { data: settings = EMPTY_TRACKING_SETTINGS, isLoading } = useQuery({
+    queryKey: ['settings-analytics'],
+    queryFn: fetchTrackingSettings,
+  });
+  const draft: GoogleTrackingSettings = { ...settings, ...overrides };
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const value = { ...settings, google_analytics_id: gaId || settings.google_analytics_id || '', whatsapp_conversion_tracking: true };
-      const { error } = await supabase.from('site_settings').upsert({ key: 'analytics', value });
+      if (!isValidGtmId(draft.gtm_id)) throw new Error('Format GTM harus GTM-XXXXXXX.');
+      if (!isValidGoogleAdsId(draft.google_ads_id)) throw new Error('Format Google Ads harus AW-123456789.');
+      if (!isValidGa4Id(draft.ga4_id)) throw new Error('Format GA4 harus G-XXXXXXXXXX.');
+
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({ key: 'analytics', value: draft }, { onConflict: 'key' });
       if (error) throw new Error(error.message);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['settings-analytics'] }),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['settings-analytics'] }),
+        queryClient.invalidateQueries({ queryKey: ['public-google-tracking'] }),
+      ]);
+      toast.success('Google tracking berhasil disimpan.');
+    },
+    onError: (error) => toast.error(error.message),
   });
 
-  const cards = [
-    { label: 'Active Services', value: services, icon: Star, tone: 'text-primary' },
-    { label: 'Published Content', value: articles, icon: FileText, tone: 'text-blue-400' },
-    { label: 'Total Bookings', value: bookings, icon: Calendar, tone: 'text-green-400' },
-    { label: 'WA Conversion', value: `${bookings}`, icon: MousePointerClick, tone: 'text-purple-400' },
-  ];
+  const updateField = (key: keyof GoogleTrackingSettings, value: string) => {
+    setOverrides((current) => ({ ...current, [key]: value.trimStart() }));
+  };
 
-  return <div className="space-y-6"><div><h1 className="text-3xl font-bold text-white">Analytics Center</h1><p className="mt-2 text-sm text-gray-400">Ringkasan performa website, konten, layanan, dan booking WhatsApp.</p></div><section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">{cards.map((card) => <div key={card.label} className="rounded-2xl border border-white/10 bg-dark-card p-5"><card.icon className={`h-6 w-6 ${card.tone}`} /><p className="mt-4 text-3xl font-bold text-white">{card.value}</p><p className="text-sm text-gray-500">{card.label}</p></div>)}</section><section className="grid gap-6 xl:grid-cols-[1fr_380px]"><div className="rounded-2xl border border-white/10 bg-dark-card p-6"><div className="flex items-center gap-3"><BarChart3 className="h-6 w-6 text-primary" /><h2 className="text-xl font-bold text-white">Performance Snapshot</h2></div><div className="mt-6 h-72 rounded-2xl border border-white/10 bg-gradient-to-br from-primary/20 via-white/[0.03] to-transparent p-6"><div className="flex h-full items-end gap-4">{[services, articles, bookings, Math.max(bookings * 2, 1)].map((value, index) => <div key={index} className="flex-1 rounded-t-2xl bg-primary/70" style={{ height: `${Math.min(100, Math.max(12, Number(value) * 12))}%` }} />)}</div></div></div><div className="rounded-2xl border border-white/10 bg-dark-card p-6"><TrendingUp className="h-7 w-7 text-primary" /><h2 className="mt-4 text-xl font-bold text-white">Tracking Settings</h2><label className="mt-5 block text-xs text-gray-500">Google Analytics ID</label><input value={gaId || String(settings.google_analytics_id ?? '')} onChange={(event) => setGaId(event.target.value)} placeholder="G-XXXXXXXXXX" className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white" /><button onClick={() => saveMutation.mutate()} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 font-bold text-dark"><RefreshCw className="h-4 w-4" /> Save Tracking</button></div></section></div>;
+  return (
+    <div className="space-y-6">
+      <header>
+        <h1 className="text-3xl font-bold text-white">Google Tracking & Conversion</h1>
+        <p className="mt-2 max-w-3xl text-sm text-gray-400">
+          Satu pusat konfigurasi untuk GTM, Google Ads, Search Console, dan GA4. Script dimuat sekali di seluruh website.
+        </p>
+      </header>
+
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="rounded-2xl border border-white/10 bg-dark-card p-6">
+          <div className="flex items-center gap-3">
+            <Code2 className="h-6 w-6 text-primary" />
+            <h2 className="text-xl font-bold text-white">Google Integration IDs</h2>
+          </div>
+          <div className="mt-6 grid gap-5 md:grid-cols-2">
+            {fields.map((field) => (
+              <label key={field.key} className="block">
+                <span className="text-sm font-semibold text-white">{field.label}</span>
+                <input
+                  value={draft[field.key]}
+                  onChange={(event) => updateField(field.key, event.target.value)}
+                  placeholder={field.placeholder}
+                  spellCheck={false}
+                  autoComplete="off"
+                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-mono text-sm text-white outline-none transition focus:border-primary/60"
+                />
+                <span className="mt-1.5 block text-xs text-gray-500">{field.hint}</span>
+              </label>
+            ))}
+          </div>
+          <button
+            type="button"
+            disabled={isLoading || saveMutation.isPending}
+            onClick={() => saveMutation.mutate()}
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 font-bold text-dark disabled:opacity-60"
+          >
+            <RefreshCw className={`h-4 w-4 ${saveMutation.isPending ? 'animate-spin' : ''}`} />
+            {saveMutation.isPending ? 'Menyimpan...' : 'Simpan Google Tracking'}
+          </button>
+        </div>
+
+        <aside className="space-y-6">
+          <div className="rounded-2xl border border-white/10 bg-dark-card p-6">
+            <BadgeCheck className="h-7 w-7 text-primary" />
+            <h2 className="mt-4 text-lg font-bold text-white">Status</h2>
+            <div className="mt-4 space-y-3 text-sm">
+              {fields.map((field) => (
+                <div key={field.key} className="flex items-center justify-between gap-3">
+                  <span className="text-gray-400">{field.label}</span>
+                  <span className={draft[field.key] ? 'text-emerald-400' : 'text-gray-600'}>
+                    {draft[field.key] ? 'Terisi' : 'Belum'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-dark-card p-6">
+            <Target className="h-7 w-7 text-primary" />
+            <h2 className="mt-4 text-lg font-bold text-white">Conversion Events</h2>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {conversionEvents.map((event) => (
+                <code key={event} className="rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1.5 text-xs text-primary">{event}</code>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-dark-card p-6">
+        <div className="flex items-start gap-3">
+          <Search className="mt-0.5 h-5 w-5 text-primary" />
+          <div>
+            <h2 className="font-bold text-white">Langkah setelah menyimpan</h2>
+            <p className="mt-1 text-sm text-gray-400">
+              Buat trigger Custom Event di GTM atau tandai event sebagai Key Event di GA4. Untuk Google Ads, hubungkan GA4 atau buat conversion action memakai event yang sama.
+            </p>
+          </div>
+        </div>
+      </section>
+      <BarChart3 className="sr-only" aria-hidden="true" />
+    </div>
+  );
 }

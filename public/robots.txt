@@ -1,0 +1,7 @@
+# Luxury Massage Bali
+User-agent: *
+Allow: /
+Disallow: /langitdewata
+Disallow: /langitdewata/
+
+Sitemap: https://luxurymassagebali.com/sitemap.xml

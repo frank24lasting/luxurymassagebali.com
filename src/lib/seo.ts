@@ -1,8 +1,14 @@
-// ============================================
-// SEO UTILITIES - Schema Markup Builders
-// ============================================
-
-import type { SEOSettings, PageSEO } from './types';
+import type { SEOSettings, PageSEO, ServicePrice } from './types';
+import {
+  DEFAULT_BUSINESS_SCHEMA,
+  DEFAULT_SCHEMA_SETTINGS,
+  getRouteOverride,
+  normalizeSchemaSettings,
+  validateJsonLd,
+  type BusinessSchemaSettings,
+  type JsonLdNode,
+  type SchemaSettings,
+} from './schema-settings';
 
 const PRODUCTION_URL = 'https://luxurymassagebali.com';
 const LOCAL_HOSTNAME_PATTERN = /^(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?$/i;
@@ -10,7 +16,6 @@ const LOCAL_ORIGIN_PATTERN = /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\
 
 const normalizeSiteUrl = (value?: string) => {
   if (!value) return PRODUCTION_URL;
-
   try {
     const parsed = new URL(value);
     if (LOCAL_HOSTNAME_PATTERN.test(parsed.host)) return PRODUCTION_URL;
@@ -22,210 +27,92 @@ const normalizeSiteUrl = (value?: string) => {
 };
 
 const BASE_URL = normalizeSiteUrl(import.meta.env.VITE_SITE_URL);
-
-/** Get the site URL - always returns production URL in SSR/schema contexts */
-export function getSiteUrl(): string {
-  return BASE_URL;
-}
-
-/** Build absolute URL for a path - replaces localhost with production URL */
-export function buildAbsoluteUrl(path: string): string {
-  if (path.startsWith('http')) {
-    // If it's a full URL, normalize it
-    if (LOCAL_ORIGIN_PATTERN.test(path)) {
-      return path.replace(LOCAL_ORIGIN_PATTERN, BASE_URL);
-    }
-    return path;
-  }
-  return `${BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
-}
-
-const BUSINESS = {
-  name: 'Luxury Massage Bali',
-  description: 'Premium home massage and wellness service delivered to villas, hotels, apartments, and homes across Bali.',
-  phoneDisplay: '+62 813 5368 1757',
-  phoneSchema: '+6281353681757',
-  email: 'hello@luxurymassagebali.com',
-  streetAddress: 'Perdana Kampial Cluster, Perdana VI No.3',
-  locality: 'Nusa Dua',
-  region: 'Bali',
-  country: 'ID',
-  countryName: 'Indonesia',
-  addressText: 'Perdana Kampial Cluster, Perdana VI No.3, Nusa Dua, Bali - Indonesia',
-  latitude: -8.8039,
-  longitude: 115.2149,
-  whatsapp: 'https://wa.me/6281353681757',
-};
-
-const absoluteUrl = (url?: string, fallbackPath = '') => {
-  if (!url) return `${BASE_URL}${fallbackPath}`;
-  if (LOCAL_ORIGIN_PATTERN.test(url)) {
-    return url.replace(LOCAL_ORIGIN_PATTERN, BASE_URL);
-  }
-  if (url.startsWith('http')) return url;
-  return `${BASE_URL}${url.startsWith('/') ? url : `/${url}`}`;
-};
-
 const organizationId = `${BASE_URL}/#organization`;
 const websiteId = `${BASE_URL}/#website`;
 const businessId = `${BASE_URL}/#localbusiness`;
 
-export function buildBusinessSchema(settings?: Partial<SEOSettings>) {
-  return {
-    '@type': ['HealthAndBeautyBusiness', 'LocalBusiness'],
-    '@id': businessId,
-    name: settings?.siteTitle || BUSINESS.name,
-    url: BASE_URL,
-    logo: absoluteUrl(settings?.defaultOgImage, '/logo.png'),
-    image: [absoluteUrl(settings?.defaultOgImage, '/og-image.jpg')],
-    description: settings?.siteDescription || BUSINESS.description,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: BUSINESS.streetAddress,
-      addressLocality: BUSINESS.locality,
-      addressRegion: BUSINESS.region,
-      addressCountry: BUSINESS.country,
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: BUSINESS.latitude,
-      longitude: BUSINESS.longitude,
-    },
-    telephone: BUSINESS.phoneSchema,
-    email: BUSINESS.email,
-    openingHoursSpecification: [
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        opens: '09:00',
-        closes: '21:00',
-      },
-    ],
-    priceRange: '$$',
-    sameAs: [BUSINESS.whatsapp],
-    hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: 'Luxury Massage Bali Treatment Menu',
-      itemListElement: [
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Massage', url: `${BASE_URL}/massage` } },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Facial', url: `${BASE_URL}/facial` } },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Body Treatment', url: `${BASE_URL}/body-treatment` } },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Spa Package', url: `${BASE_URL}/spa-package` } },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Couple Package', url: `${BASE_URL}/couple-package` } },
-      ],
-    },
-  };
+export function getSiteUrl(): string {
+  return BASE_URL;
 }
 
-export function buildLocalBusinessSchema() {
-  return buildBusinessSchema();
+export function buildAbsoluteUrl(path: string): string {
+  if (!path) return BASE_URL;
+  if (path.startsWith('http')) {
+    return LOCAL_ORIGIN_PATTERN.test(path) ? path.replace(LOCAL_ORIGIN_PATTERN, BASE_URL) : path;
+  }
+  return `${BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
-export function buildArticleSchema(article: {
-  title: string;
-  slug: string;
-  excerpt: string;
-  coverImage: string;
-  author: string;
-  publishedAt: string;
-  updatedAt: string;
-}) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: article.title,
-    url: `${BASE_URL}/${article.slug}`,
-    datePublished: article.publishedAt,
-    dateModified: article.updatedAt,
-    author: { '@type': 'Person', name: article.author, url: BASE_URL },
-    publisher: { '@id': organizationId },
-    image: { '@type': 'ImageObject', url: absoluteUrl(article.coverImage), width: 1200, height: 630 },
-    description: article.excerpt,
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `${BASE_URL}/${article.slug}` },
-  };
+const canonicalPath = (path = '/') => {
+  const cleaned = path.trim().split(/[?#]/)[0] || '/';
+  const prefixed = cleaned.startsWith('/') ? cleaned : `/${cleaned}`;
+  return prefixed.length > 1 ? prefixed.replace(/\/+$/, '') : '/';
+};
+
+const absoluteUrl = (url?: string, fallbackPath = '') => buildAbsoluteUrl(url || fallbackPath);
+const entityId = (path: string, fragment: string) => `${buildAbsoluteUrl(canonicalPath(path))}#${fragment}`;
+
+function cleanJsonLdValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    const cleaned = value.map(cleanJsonLdValue).filter((item) => item !== undefined);
+    return cleaned.length > 0 ? cleaned : undefined;
+  }
+  if (value && typeof value === 'object') {
+    const entries = Object.entries(value as JsonLdNode)
+      .map(([key, item]) => [key, cleanJsonLdValue(item)] as const)
+      .filter(([, item]) => item !== undefined);
+    return entries.length > 0 ? Object.fromEntries(entries) : undefined;
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed ? trimmed : undefined;
+  }
+  if (value === null || value === undefined || Number.isNaN(value)) return undefined;
+  return value;
 }
 
-export function buildServiceSchema(service: {
-  name: string;
-  slug: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-  duration?: string;
-}) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Service',
-    '@id': `${BASE_URL}/services/${service.slug}#service`,
-    name: service.name,
-    description: service.description,
-    url: `${BASE_URL}/services/${service.slug}`,
-    image: absoluteUrl(service.imageUrl),
-    provider: { '@id': businessId },
-    areaServed: { '@type': 'AdministrativeArea', name: 'Bali, Indonesia' },
-    offers: {
-      '@type': 'Offer',
-      price: service.price,
-      priceCurrency: 'IDR',
-      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      availability: 'https://schema.org/InStock',
-      url: `${BASE_URL}/services/${service.slug}`,
-    },
-  };
+export function sanitizeJsonLd<T extends JsonLdNode>(schema: T): T {
+  return (cleanJsonLdValue(schema) || {}) as T;
 }
 
-export function buildBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: item.name,
-      item: absoluteUrl(item.url),
-    })),
-  };
+export function serializeJsonLd(schema: JsonLdNode): string {
+  return JSON.stringify(sanitizeJsonLd(schema)).replace(/</g, '\\u003c');
 }
 
-export function buildFAQSchema(faqs: Array<{ question: string; answer: string }>) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
-    })),
-  };
-}
+const businessSettings = (settings?: SchemaSettings) =>
+  normalizeSchemaSettings(settings || DEFAULT_SCHEMA_SETTINGS).business;
 
-export function buildOrganizationSchema() {
-  return {
+export function buildOrganizationSchema(business: BusinessSchemaSettings = DEFAULT_BUSINESS_SCHEMA): JsonLdNode {
+  return sanitizeJsonLd({
     '@type': 'Organization',
     '@id': organizationId,
-    name: BUSINESS.name,
+    name: business.name,
+    legalName: business.legalName,
     url: BASE_URL,
-    logo: { '@type': 'ImageObject', url: `${BASE_URL}/logo.png`, width: 512, height: 512 },
-    description: BUSINESS.description,
-    foundingDate: '2020',
-    sameAs: [BUSINESS.whatsapp],
+    logo: { '@type': 'ImageObject', '@id': `${BASE_URL}/#logo`, url: absoluteUrl(business.logo), width: 512, height: 512 },
+    image: { '@id': `${BASE_URL}/#logo` },
+    description: business.description,
+    email: business.email,
+    telephone: business.telephone,
+    sameAs: business.sameAs,
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: BUSINESS.phoneSchema,
-      contactType: 'customer service',
+      telephone: business.telephone,
+      contactType: 'reservations',
       availableLanguage: ['Indonesian', 'English'],
-      areaServed: BUSINESS.country,
+      areaServed: 'ID',
     },
-  };
+  });
 }
 
-export function buildWebSiteSchema() {
-  return {
+export function buildWebSiteSchema(business: BusinessSchemaSettings = DEFAULT_BUSINESS_SCHEMA): JsonLdNode {
+  return sanitizeJsonLd({
     '@type': 'WebSite',
     '@id': websiteId,
-    name: BUSINESS.name,
+    name: business.name,
     url: BASE_URL,
-    description: BUSINESS.description,
+    description: business.description,
+    inLanguage: ['id-ID', 'en'],
     publisher: { '@id': organizationId },
     potentialAction: {
       '@type': 'ReserveAction',
@@ -234,68 +121,295 @@ export function buildWebSiteSchema() {
         urlTemplate: `${BASE_URL}/appointment`,
         actionPlatform: ['https://schema.org/DesktopWebPlatform', 'https://schema.org/MobileWebPlatform'],
       },
-      object: { '@type': 'Service', name: 'Spa Services', provider: { '@id': businessId } },
+      object: { '@type': 'Service', name: 'Home Massage and Spa Services', provider: { '@id': businessId } },
     },
-  };
+  });
 }
 
-export function buildVideoSchema(video: { url: string; title: string; description: string; thumbnail: string }) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'VideoObject',
-    name: video.title,
-    description: video.description,
-    thumbnailUrl: absoluteUrl(video.thumbnail),
-    uploadDate: new Date().toISOString(),
-    contentUrl: absoluteUrl(video.url),
-    embedUrl: absoluteUrl(video.url),
-    duration: 'PT30S',
-    width: 1920,
-    height: 1080,
-  };
+export function buildBusinessSchema(
+  seo?: Partial<SEOSettings>,
+  business: BusinessSchemaSettings = DEFAULT_BUSINESS_SCHEMA
+): JsonLdNode {
+  const types = business.businessTypes.length > 0 ? business.businessTypes : DEFAULT_BUSINESS_SCHEMA.businessTypes;
+  return sanitizeJsonLd({
+    '@type': types,
+    '@id': businessId,
+    name: business.name || seo?.siteTitle,
+    description: business.description || seo?.siteDescription,
+    url: BASE_URL,
+    logo: { '@id': `${BASE_URL}/#logo` },
+    image: [absoluteUrl(business.image || seo?.defaultOgImage, '/og-image.jpg')],
+    telephone: business.telephone,
+    email: business.email,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: business.streetAddress,
+      addressLocality: business.addressLocality,
+      addressRegion: business.addressRegion,
+      postalCode: business.postalCode,
+      addressCountry: business.addressCountry,
+    },
+    geo: business.latitude !== null && business.longitude !== null ? {
+      '@type': 'GeoCoordinates', latitude: business.latitude, longitude: business.longitude,
+    } : undefined,
+    hasMap: business.googleMapsUrl,
+    openingHoursSpecification: [{
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: business.opens,
+      closes: business.closes,
+    }],
+    priceRange: business.priceRange,
+    currenciesAccepted: business.currenciesAccepted,
+    paymentAccepted: business.paymentAccepted.join(', '),
+    areaServed: business.areaServed.map((name) => ({ '@type': 'AdministrativeArea', name })),
+    sameAs: business.sameAs,
+    parentOrganization: { '@id': organizationId },
+  });
 }
 
-export function buildCompleteSchema(settings?: Partial<SEOSettings>) {
-  return {
-    '@context': 'https://schema.org',
-    '@graph': [
-      buildOrganizationSchema(),
-      buildWebSiteSchema(),
-      buildBusinessSchema(settings),
-    ],
+export function buildLocalBusinessSchema(): JsonLdNode {
+  return buildBusinessSchema();
+}
+
+export interface ArticleSchemaData {
+  title: string;
+  slug: string;
+  excerpt: string;
+  coverImage: string;
+  author: string;
+  publishedAt: string;
+  updatedAt: string;
+  category?: string;
+  tags?: string[];
+}
+
+export function buildArticleSchema(article: ArticleSchemaData): JsonLdNode {
+  const path = `/${article.slug}`;
+  const url = buildAbsoluteUrl(path);
+  return sanitizeJsonLd({
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
+    headline: article.title,
+    name: article.title,
+    description: article.excerpt,
+    url,
+    mainEntityOfPage: { '@id': `${url}#webpage` },
+    image: { '@type': 'ImageObject', url: absoluteUrl(article.coverImage, '/og-image.jpg'), width: 1200, height: 630 },
+    datePublished: article.publishedAt,
+    dateModified: article.updatedAt,
+    author: { '@type': 'Person', name: article.author || 'Luxury Massage Bali Editorial Team' },
+    publisher: { '@id': organizationId },
+    articleSection: article.category,
+    keywords: article.tags,
+    inLanguage: 'id-ID',
+    isPartOf: { '@id': websiteId },
+  });
+}
+
+export interface ServiceSchemaData {
+  name: string;
+  slug: string;
+  description: string;
+  price?: number;
+  imageUrl: string;
+  duration?: string;
+  category?: string;
+  prices?: Array<Pick<ServicePrice, 'label' | 'duration_minutes' | 'price'>>;
+}
+
+export function buildServiceSchema(service: ServiceSchemaData): JsonLdNode {
+  const path = `/services/${service.slug}`;
+  const url = buildAbsoluteUrl(path);
+  const priceOptions = service.prices?.filter((item) => item.price > 0) || [];
+  const fallbackOffers = service.price && service.price > 0
+    ? [{ label: service.duration || service.name, duration_minutes: null, price: service.price }]
+    : [];
+  const offers = (priceOptions.length > 0 ? priceOptions : fallbackOffers).map((item) => sanitizeJsonLd({
+    '@type': 'Offer',
+    name: `${service.name} — ${item.label || (item.duration_minutes ? `${item.duration_minutes} Minutes` : 'Treatment')}`,
+    price: item.price,
+    priceCurrency: 'IDR',
+    availability: 'https://schema.org/InStock',
+    url,
+    eligibleRegion: { '@type': 'AdministrativeArea', name: 'Bali, Indonesia' },
+    itemOffered: { '@id': `${url}#service` },
+  }));
+
+  return sanitizeJsonLd({
+    '@type': 'Service',
+    '@id': `${url}#service`,
+    name: service.name,
+    serviceType: service.category || 'Massage and wellness treatment',
+    description: service.description,
+    url,
+    image: absoluteUrl(service.imageUrl, '/og-image.jpg'),
+    provider: { '@id': businessId },
+    areaServed: { '@type': 'AdministrativeArea', name: 'Bali, Indonesia' },
+    availableChannel: {
+      '@type': 'ServiceChannel',
+      serviceUrl: `${BASE_URL}/appointment`,
+      serviceLocation: { '@type': 'Place', name: 'Customer villa, hotel, apartment, or home in Bali' },
+    },
+    offers,
+  });
+}
+
+export function buildBreadcrumbSchema(items: Array<{ name: string; url: string }>): JsonLdNode {
+  const normalized = items.map((item) => ({ ...item, url: absoluteUrl(item.url) }));
+  const pageUrl = normalized.at(-1)?.url || BASE_URL;
+  return sanitizeJsonLd({
+    '@type': 'BreadcrumbList',
+    '@id': `${pageUrl}#breadcrumb`,
+    itemListElement: normalized.map((item, index) => ({
+      '@type': 'ListItem', position: index + 1, name: item.name, item: item.url,
+    })),
+  });
+}
+
+export function buildFAQSchema(faqs: Array<{ question: string; answer: string }>, path = '/faq'): JsonLdNode {
+  return sanitizeJsonLd({
+    '@type': 'FAQPage',
+    '@id': entityId(path, 'faq'),
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question', name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  });
+}
+
+export function buildPageSchema(
+  page: PageSEO,
+  pageType: 'WebPage' | 'AboutPage' | 'ContactPage' | 'CollectionPage' = 'WebPage',
+  breadcrumbId?: string
+): JsonLdNode {
+  const url = buildAbsoluteUrl(canonicalPath(page.path));
+  return sanitizeJsonLd({
+    '@type': pageType,
+    '@id': `${url}#webpage`,
+    url,
+    name: page.title,
+    description: page.description,
+    isPartOf: { '@id': websiteId },
+    about: { '@id': businessId },
+    primaryImageOfPage: page.ogImage ? { '@type': 'ImageObject', url: absoluteUrl(page.ogImage) } : undefined,
+    breadcrumb: breadcrumbId ? { '@id': breadcrumbId } : undefined,
+    inLanguage: 'id-ID',
+  });
+}
+
+export function buildItemListSchema(
+  path: string,
+  name: string,
+  items: Array<{ name: string; url: string; image?: string }>
+): JsonLdNode {
+  const url = buildAbsoluteUrl(path);
+  return sanitizeJsonLd({
+    '@type': 'ItemList',
+    '@id': `${url}#itemlist`,
+    name,
+    numberOfItems: items.length,
+    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem', position: index + 1, url: absoluteUrl(item.url), name: item.name,
+      image: item.image ? absoluteUrl(item.image) : undefined,
+    })),
+  });
+}
+
+const mergeNodes = (base: JsonLdNode[], additions: JsonLdNode[]) => {
+  const result = [...base];
+  additions.forEach((addition) => {
+    const id = typeof addition['@id'] === 'string' ? addition['@id'] : undefined;
+    const index = id ? result.findIndex((node) => node['@id'] === id) : -1;
+    if (index >= 0) result[index] = sanitizeJsonLd({ ...result[index], ...addition });
+    else result.push(addition);
+  });
+  return result;
+};
+
+function extractOverrideNodes(override: JsonLdNode): JsonLdNode[] {
+  if (Array.isArray(override['@graph'])) {
+    return override['@graph'].filter((item): item is JsonLdNode => Boolean(item) && typeof item === 'object' && !Array.isArray(item));
+  }
+  const { ['@context']: _context, ...node } = override;
+  return [node];
+}
+
+export interface CompleteSchemaOptions {
+  settings?: SchemaSettings;
+  globalSEO?: Partial<SEOSettings>;
+  pageSEO?: PageSEO;
+  pageType?: 'WebPage' | 'AboutPage' | 'ContactPage' | 'CollectionPage';
+  articleData?: ArticleSchemaData;
+  serviceData?: ServiceSchemaData;
+  breadcrumbItems?: Array<{ name: string; url: string }>;
+  faqData?: Array<{ question: string; answer: string }>;
+  itemList?: { name: string; items: Array<{ name: string; url: string; image?: string }> };
+  explicitOverride?: JsonLdNode;
+}
+
+export function buildCompleteSchema(options: CompleteSchemaOptions | Partial<SEOSettings> = {}): JsonLdNode {
+  const isLegacyCall = !('settings' in options) && !('pageSEO' in options) && !('globalSEO' in options);
+  const config = (isLegacyCall ? { globalSEO: options as Partial<SEOSettings> } : options) as CompleteSchemaOptions;
+  const settings = normalizeSchemaSettings(config.settings || DEFAULT_SCHEMA_SETTINGS);
+  const business = businessSettings(settings);
+  const page = config.pageSEO || {
+    path: '/', title: config.globalSEO?.siteTitle || business.name,
+    description: config.globalSEO?.siteDescription || business.description,
+    ogImage: config.globalSEO?.defaultOgImage || business.image,
   };
+  const path = canonicalPath(page.path);
+  const breadcrumbs = config.breadcrumbItems?.length
+    ? config.breadcrumbItems
+    : path === '/' ? [{ name: 'Home', url: '/' }] : [{ name: 'Home', url: '/' }, { name: page.title, url: path }];
+  const breadcrumb = buildBreadcrumbSchema(breadcrumbs);
+  const pageNode = buildPageSchema(page, config.pageType, breadcrumb['@id'] as string);
+
+  let nodes: JsonLdNode[] = [
+    buildOrganizationSchema(business),
+    buildWebSiteSchema(business),
+    buildBusinessSchema(config.globalSEO, business),
+    pageNode,
+    breadcrumb,
+  ];
+  if (config.articleData) nodes.push(buildArticleSchema(config.articleData));
+  if (config.serviceData) nodes.push(buildServiceSchema(config.serviceData));
+  if (config.faqData?.length) nodes.push(buildFAQSchema(config.faqData, path));
+  if (config.itemList?.items.length) nodes.push(buildItemListSchema(path, config.itemList.name, config.itemList.items));
+
+  const routeOverride = getRouteOverride(settings, path);
+  if (routeOverride?.enabled && validateJsonLd(routeOverride.schema).length === 0) {
+    const overrideNodes = extractOverrideNodes(routeOverride.schema);
+    nodes = routeOverride.mode === 'replace' ? overrideNodes : mergeNodes(nodes, overrideNodes);
+  }
+  if (config.explicitOverride && validateJsonLd(config.explicitOverride).length === 0) {
+    nodes = mergeNodes(nodes, extractOverrideNodes(config.explicitOverride));
+  }
+
+  return sanitizeJsonLd({ '@context': 'https://schema.org', '@graph': nodes });
 }
 
 export function buildMetaTags(pageSEO?: PageSEO, globalSEO?: Partial<SEOSettings>) {
+  const business = DEFAULT_BUSINESS_SCHEMA;
   const title = pageSEO?.title || globalSEO?.siteTitle || 'Luxury Massage Bali — Premium Home Massage';
-  const description = pageSEO?.description || globalSEO?.siteDescription || BUSINESS.description;
+  const description = pageSEO?.description || globalSEO?.siteDescription || business.description;
   const image = absoluteUrl(pageSEO?.ogImage || globalSEO?.defaultOgImage, '/og-image.jpg');
   const path = pageSEO?.path || '';
-  const url = path ? `${BASE_URL}${path.startsWith('/') ? path : `/${path}`}` : BASE_URL;
-
+  const url = path ? buildAbsoluteUrl(path) : BASE_URL;
   return {
-    title,
-    description,
+    title, description,
     keywords: 'luxury massage bali, home massage bali, balinese massage, out call massage bali, facial bali, body treatment bali, couple massage bali',
-    author: BUSINESS.name,
+    author: business.name,
     robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
     canonical: url,
-    og: { title, description, image, url, type: 'website', siteName: globalSEO?.ogSiteName || BUSINESS.name },
+    og: { title, description, image, url, type: pageSEO ? 'website' : 'website', siteName: globalSEO?.ogSiteName || business.name },
     twitter: { card: globalSEO?.twitterCard || 'summary_large_image', title, description, image, site: globalSEO?.twitterHandle || undefined },
   };
 }
 
 export function generateRobotsTxt(sitemapUrl?: string) {
-  return `# Luxury Massage Bali - robots.txt
-User-agent: *
-Allow: /
-
-# Disallow admin
-Disallow: /langitdewata/
-
-# Sitemap
-Sitemap: ${sitemapUrl || `${BASE_URL}/sitemap.xml`}
-`;
+  return `# Luxury Massage Bali - robots.txt\nUser-agent: *\nAllow: /\n\nDisallow: /langitdewata/\n\nSitemap: ${sitemapUrl || `${BASE_URL}/sitemap.xml`}\n`;
 }
 
 export interface SitemapUrl {
@@ -306,19 +420,7 @@ export interface SitemapUrl {
 }
 
 export function buildSitemap(urls: SitemapUrl[]) {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls
-      .map(
-        (url) => `  <url>
-    <loc>${absoluteUrl(url.loc)}</loc>
-    ${url.lastmod ? `<lastmod>${url.lastmod}</lastmod>` : ''}
-    ${url.changefreq ? `<changefreq>${url.changefreq}</changefreq>` : ''}
-    ${url.priority ? `<priority>${url.priority}</priority>` : ''}
-  </url>`
-      )
-      .join('\n')}
-</urlset>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((url) => `  <url>\n    <loc>${absoluteUrl(url.loc)}</loc>\n    ${url.lastmod ? `<lastmod>${url.lastmod}</lastmod>` : ''}\n    ${url.changefreq ? `<changefreq>${url.changefreq}</changefreq>` : ''}\n    ${url.priority ? `<priority>${url.priority}</priority>` : ''}\n  </url>`).join('\n')}\n</urlset>`;
 }
 
 export const DEFAULT_SCHEMA = buildCompleteSchema();

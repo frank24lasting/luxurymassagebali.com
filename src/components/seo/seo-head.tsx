@@ -1,89 +1,73 @@
 import { Helmet } from 'react-helmet-async';
-import { buildMetaTags, buildCompleteSchema, buildArticleSchema, buildServiceSchema, buildBreadcrumbSchema, buildFAQSchema } from '@/lib/seo';
+import {
+  buildBreadcrumbSchema,
+  buildCompleteSchema,
+  buildMetaTags,
+  serializeJsonLd,
+  type ArticleSchemaData,
+  type ServiceSchemaData,
+} from '@/lib/seo';
+import { useSchemaSettings, type JsonLdNode } from '@/lib/schema-settings';
 import type { SEOSettings, PageSEO } from '@/lib/types';
-
-// ============================================
-// SEO HEAD COMPONENT
-// ============================================
 
 interface SEOHeadProps {
   pageSEO?: PageSEO;
   globalSEO?: Partial<SEOSettings>;
   schemaType?: 'default' | 'article' | 'service';
-  articleData?: {
-    title: string;
-    slug: string;
-    excerpt: string;
-    coverImage: string;
-    author: string;
-    publishedAt: string;
-    updatedAt: string;
-  };
-  serviceData?: {
-    name: string;
-    slug: string;
-    description: string;
-    price: number;
-    imageUrl: string;
-    duration?: string;
-  };
+  pageType?: 'WebPage' | 'AboutPage' | 'ContactPage' | 'CollectionPage';
+  articleData?: ArticleSchemaData;
+  serviceData?: ServiceSchemaData;
   breadcrumbItems?: Array<{ name: string; url: string }>;
   faqData?: Array<{ question: string; answer: string }>;
+  itemList?: { name: string; items: Array<{ name: string; url: string; image?: string }> };
+  schemaOverride?: JsonLdNode;
 }
 
 export function SEOHead({
   pageSEO,
   globalSEO,
   schemaType = 'default',
+  pageType,
   articleData,
   serviceData,
   breadcrumbItems,
   faqData,
+  itemList,
+  schemaOverride,
 }: SEOHeadProps) {
   const meta = buildMetaTags(pageSEO, globalSEO);
-
-  // Build schema based on type
-  const getSchema = () => {
-    switch (schemaType) {
-      case 'article':
-        if (articleData) {
-          return [
-            buildArticleSchema(articleData),
-            ...(breadcrumbItems ? [buildBreadcrumbSchema(breadcrumbItems)] : []),
-          ];
-        }
-        break;
-      case 'service':
-        if (serviceData) {
-          return [
-            buildServiceSchema(serviceData),
-            ...(breadcrumbItems ? [buildBreadcrumbSchema(breadcrumbItems)] : []),
-          ];
-        }
-        break;
-      case 'default':
-      default:
-        return buildCompleteSchema(globalSEO);
-    }
-    return null;
+  const { data: schemaSettings } = useSchemaSettings();
+  const effectivePageSEO = pageSEO || {
+    path: '/',
+    title: meta.title,
+    description: meta.description,
+    ogImage: meta.og.image,
   };
-
-  const schema = getSchema();
+  const resolvedPageType = pageType || (itemList ? 'CollectionPage' : 'WebPage');
+  const schema = buildCompleteSchema({
+    settings: schemaSettings,
+    globalSEO,
+    pageSEO: effectivePageSEO,
+    pageType: resolvedPageType,
+    articleData: schemaType === 'article' ? articleData : undefined,
+    serviceData: schemaType === 'service' ? serviceData : undefined,
+    breadcrumbItems,
+    faqData,
+    itemList,
+    explicitOverride: schemaOverride,
+  });
 
   return (
     <Helmet>
-      {/* Primary Meta Tags */}
       <title>{meta.title}</title>
       <meta name="description" content={meta.description} />
       <meta name="keywords" content={meta.keywords} />
       <meta name="author" content={meta.author} />
       <meta name="robots" content={meta.robots} />
       <link rel="canonical" href={meta.canonical} />
-
       <meta name="googlebot" content={meta.robots} />
       <meta name="bingbot" content={meta.robots} />
 
-      {/* Open Graph */}
       <meta property="og:title" content={meta.og.title} />
       <meta property="og:description" content={meta.og.description} />
       <meta property="og:image" content={meta.og.image} />
@@ -92,11 +76,10 @@ export function SEOHead({
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content={meta.og.title} />
       <meta property="og:url" content={meta.og.url} />
-      <meta property="og:type" content={meta.og.type} />
+      <meta property="og:type" content={schemaType === 'article' ? 'article' : meta.og.type} />
       <meta property="og:site_name" content={meta.og.siteName} />
       <meta property="og:locale" content="id_ID" />
 
-      {/* Twitter */}
       <meta name="twitter:card" content={meta.twitter.card} />
       <meta name="twitter:title" content={meta.twitter.title} />
       <meta name="twitter:description" content={meta.twitter.description} />
@@ -104,76 +87,46 @@ export function SEOHead({
       <meta name="twitter:image:alt" content={meta.twitter.title} />
       {meta.twitter.site && <meta name="twitter:site" content={meta.twitter.site} />}
 
-      {/* Mobile Specific */}
       <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       <meta name="theme-color" content="#19322c" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-      {/* JSON-LD Structured Data */}
-      {schema && (
-        <script type="application/ld+json">
-          {JSON.stringify(schema)}
-        </script>
-      )}
-
-      {/* FAQ Schema */}
-      {faqData && faqData.length > 0 && (
-        <script type="application/ld+json">
-          {JSON.stringify(buildFAQSchema(faqData))}
-        </script>
-      )}
+      <script id="page-json-ld" type="application/ld+json">
+        {serializeJsonLd(schema)}
+      </script>
     </Helmet>
   );
 }
 
-// ============================================
-// SCHEMA SCRIPT COMPONENT (Standalone JSON-LD)
-// ============================================
-
 interface SchemaScriptProps {
-  schema: Record<string, unknown>;
+  schema: JsonLdNode;
 }
 
 export function SchemaScript({ schema }: SchemaScriptProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
     />
   );
 }
-
-// ============================================
-// BREADCRUMB JSON-LD COMPONENT
-// ============================================
 
 interface BreadcrumbJsonLDProps {
   items: Array<{ name: string; url: string }>;
 }
 
 export function BreadcrumbJsonLD({ items }: BreadcrumbJsonLDProps) {
-  const schema = buildBreadcrumbSchema(items);
-  return <SchemaScript schema={schema} />;
+  return <SchemaScript schema={buildBreadcrumbSchema(items)} />;
 }
-
-// ============================================
-// DEFAULT SCHEMA INJECTOR
-// ============================================
 
 interface DefaultSchemaProps {
   settings?: Partial<SEOSettings>;
 }
 
 export function DefaultSchema({ settings }: DefaultSchemaProps) {
-  const schemas = buildCompleteSchema(settings);
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }}
-    />
-  );
+  return <SchemaScript schema={buildCompleteSchema(settings)} />;
 }
 
 // ============================================

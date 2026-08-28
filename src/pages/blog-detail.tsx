@@ -243,7 +243,27 @@ export default function BlogDetail() {
 
   return (
     <>
-      <SEOHead pageSEO={{ path: `/${article.slug}`, title: article.seo_title || article.title, description: article.seo_description || article.excerpt, ogImage: article.og_image || article.cover_image }} schemaType="article" articleData={{ title: article.title, slug: article.slug, excerpt: article.excerpt, coverImage: article.cover_image, author: article.author, publishedAt: publishedDate, updatedAt: article.updated_at }} />
+      <SEOHead
+        pageSEO={{ path: `/${article.slug}`, title: article.seo_title || article.title, description: article.seo_description || article.excerpt, ogImage: article.og_image || article.cover_image }}
+        schemaType="article"
+        articleData={{
+          title: article.title,
+          slug: article.slug,
+          excerpt: article.excerpt,
+          coverImage: article.cover_image,
+          author: article.author,
+          publishedAt: publishedDate,
+          updatedAt: article.updated_at,
+          category: article.category,
+          tags: article.tags,
+        }}
+        breadcrumbItems={[
+          { name: 'Home', url: '/' },
+          { name: 'Blog', url: '/blog' },
+          { name: article.title, url: `/${article.slug}` },
+        ]}
+        schemaOverride={article.schema_markup?.json_ld && typeof article.schema_markup.json_ld === 'object' ? article.schema_markup.json_ld as Record<string, unknown> : undefined}
+      />
       <main className="min-h-screen bg-dark pb-24 pt-24 text-white md:pt-28">
         <section className="section-container">
           <Link to="/blog" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-primary md:text-sm"><ArrowLeft className="h-4 w-4" /> Blog</Link>

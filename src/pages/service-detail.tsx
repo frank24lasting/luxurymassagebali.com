@@ -60,7 +60,25 @@ export default function ServiceDetail() {
 
   return (
     <>
-      <SEOHead pageSEO={{ path: `/services/${service.slug}`, title: `${service.name} — Luxury Massage Bali`, description: service.description, ogImage: service.image_url }} schemaType="service" serviceData={{ name: service.name, slug: service.slug, description: service.description, price: lowestPrice, imageUrl: service.image_url, duration: durationLabel }} />
+      <SEOHead
+        pageSEO={{ path: `/services/${service.slug}`, title: `${service.name} — Luxury Massage Bali`, description: service.description, ogImage: service.image_url }}
+        schemaType="service"
+        serviceData={{
+          name: service.name,
+          slug: service.slug,
+          description: service.description,
+          price: service.price ?? undefined,
+          imageUrl: service.image_url,
+          duration: durationLabel,
+          category: service.category,
+          prices: sortedPrices,
+        }}
+        breadcrumbItems={[
+          { name: 'Home', url: '/' },
+          { name: 'Services', url: '/services' },
+          { name: service.name, url: `/services/${service.slug}` },
+        ]}
+      />
       <main className="min-h-screen bg-dark pb-24 pt-24 text-white md:pt-28">
         <section className="section-container">
           <Link to="/services" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary md:text-sm"><ArrowLeft className="h-4 w-4" /> Layanan</Link>

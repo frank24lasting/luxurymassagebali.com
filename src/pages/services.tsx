@@ -24,7 +24,14 @@ export default function Services() {
 
   return (
     <>
-      <SEOHead pageSEO={{ path: '/services', title: 'Layanan Luxury Massage Bali — Massage, Facial & Body Care', description: 'Pilih treatment Luxury Massage Bali: Balinese Massage, facial, lymphatic massage, body treatment, dan spa package untuk home service di Bali.', ogImage: '' }} />
+      <SEOHead
+        pageSEO={{ path: '/services', title: 'Layanan Luxury Massage Bali — Massage, Facial & Body Care', description: 'Pilih treatment Luxury Massage Bali: Balinese Massage, facial, lymphatic massage, body treatment, dan spa package untuk home service di Bali.', ogImage: '' }}
+        pageType="CollectionPage"
+        itemList={{
+          name: 'Luxury Massage Bali Service Menu',
+          items: services.map((service) => ({ name: service.name, url: `/services/${service.slug}`, image: service.image_url })),
+        }}
+      />
       <section className="relative min-h-screen overflow-hidden bg-dark pt-28 pb-24 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(168,200,186,0.26),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(45,74,62,0.45),transparent_40%)]" />
         <div className="section-container relative z-10">

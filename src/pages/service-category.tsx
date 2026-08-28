@@ -114,6 +114,16 @@ export default function ServiceCategoryPage() {
           description: `${page.intro} Booking premium home massage di Bali dengan terapis berpengalaman.`,
           ogImage: '',
         }}
+        pageType="CollectionPage"
+        breadcrumbItems={[
+          { name: 'Home', url: '/' },
+          { name: 'Services', url: '/services' },
+          { name: page.title, url: `/${page.slug}` },
+        ]}
+        itemList={{
+          name: page.title,
+          items: page.rituals.map((ritual) => ({ name: ritual.name, url: `/${page.slug}#${ritual.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` })),
+        }}
       />
 
       <main className="overflow-hidden bg-dark text-white">

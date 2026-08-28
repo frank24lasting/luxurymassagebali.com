@@ -15,7 +15,14 @@ export default function Blog() {
   const { data: articles = [], isLoading } = useQuery({ queryKey: ['public-articles'], queryFn: fetchArticles });
   return (
     <>
-      <SEOHead pageSEO={{ path: '/blog', title: 'Wellness Journal — Luxury Massage Bali', description: 'Panduan massage, body care, facial, dan wellness dari Luxury Massage Bali.', ogImage: '' }} />
+      <SEOHead
+        pageSEO={{ path: '/blog', title: 'Wellness Journal — Luxury Massage Bali', description: 'Panduan massage, body care, facial, dan wellness dari Luxury Massage Bali.', ogImage: '' }}
+        pageType="CollectionPage"
+        itemList={{
+          name: 'Luxury Massage Bali Wellness Journal',
+          items: articles.map((article) => ({ name: article.title, url: `/${article.slug}`, image: article.cover_image })),
+        }}
+      />
       <main className="min-h-screen bg-dark pt-28 pb-24 text-white">
         <section className="section-container">
           <div className="max-w-3xl"><span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"><PenLine className="h-4 w-4" /> Blog & Artikel</span><h1 className="mt-6 font-heading text-5xl font-bold md:text-7xl">Panduan Spa, Beauty & Wellness</h1><p className="mt-5 text-lg text-gray-300">Konten artikel dinamis dari database dan bisa dikelola lewat dashboard admin.</p></div>
